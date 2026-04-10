@@ -87,8 +87,8 @@
 
     <div class="flex min-h-screen">
         <!-- Sidebar -->
-        <aside id="sidebar" class="w-[280px] bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 fixed h-full z-50 transition-all duration-300 -translate-x-full lg:translate-x-0 overflow-y-auto">
-            <div class="p-8 hidden lg:flex items-center gap-3">
+        <aside id="sidebar" class="w-[250px] bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 fixed h-full z-50 transition-all duration-300 -translate-x-full lg:translate-x-0 overflow-y-auto">
+            <div class="p-6 hidden lg:flex items-center gap-3">
                 <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/30">
                     <i data-lucide="line-chart" class="w-5 h-5 text-white"></i>
                 </div>
@@ -143,14 +143,14 @@
 
                 <a href="/accounts" class="nav-item group flex items-center gap-4 px-4 py-2.5 rounded-2xl transition-all duration-300">
                     <div class="icon-box w-10 h-10 rounded-xl flex items-center justify-center bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20 transition-all shadow-sm">
-                        <i data-lucide="wallet" class="w-5 h-5 text-slate-500 group-hover:text-blue-600"></i>
+                        <i data-lucide="database" class="w-5 h-5 text-slate-500 group-hover:text-blue-600"></i>
                     </div>
                     <span class="text-sm font-bold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-100 transition-colors">Accounts</span>
                 </a>
 
                 <a href="/payouts" class="nav-item group flex items-center gap-4 px-4 py-2.5 rounded-2xl transition-all duration-300">
                     <div class="icon-box w-10 h-10 rounded-xl flex items-center justify-center bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20 transition-all shadow-sm">
-                        <i data-lucide="hand-coins" class="w-5 h-5 text-slate-500 group-hover:text-blue-600"></i>
+                        <i data-lucide="wallet" class="w-5 h-5 text-slate-500 group-hover:text-blue-600"></i>
                     </div>
                     <span class="text-sm font-bold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-100 transition-colors">Payouts</span>
                 </a>
@@ -165,8 +165,8 @@
                 </a>
             </nav>
 
-            <div class="mt-8 mb-6 px-6">
-                <button id="theme-toggle-btn" class="w-full h-12 flex items-center justify-center gap-3 rounded-2xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all text-sm font-bold shadow-sm">
+            <div class="px-8 py-8 mt-auto">
+                <button id="theme-toggle" class="w-full flex items-center justify-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all font-bold text-xs">
                     <span class="light-mode-icon text-amber-500 flex items-center gap-2">
                         <i data-lucide="sun" class="w-4 h-4"></i> Light
                     </span>
@@ -178,7 +178,7 @@
         </aside>
 
         <!-- Main Content -->
-        <main class="flex-1 lg:ml-64 pt-24 lg:pt-8 px-4 md:px-8 pb-12 transition-all duration-300">
+        <main class="flex-1 lg:ml-[250px] pt-24 lg:pt-8 px-4 md:px-8 pb-12 transition-all duration-300">
             <div class="max-w-[1600px] mx-auto">
                 <%- body %>
             </div>

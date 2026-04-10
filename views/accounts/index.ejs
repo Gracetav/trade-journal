@@ -12,8 +12,8 @@
             <thead>
                 <tr class="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-700">
                     <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Trading Info</th>
-                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">Type</th>
-                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">Size / Balance</th>
+                    <th class="hidden xl:table-cell px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">Type</th>
+                    <th class="hidden xl:table-cell px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">Size / Balance</th>
                     <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">Status</th>
                     <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">Total Payout</th>
                     <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">Actions</th>
@@ -28,10 +28,10 @@
                             <span>ID: #<%= acc.account_login_id || 'N/A' %></span>
                         </div>
                     </td>
-                    <td class="px-6 py-4 text-center">
+                    <td class="hidden xl:table-cell px-6 py-4 text-center">
                         <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase"><%= acc.account_type %></span>
                     </td>
-                    <td class="px-6 py-4 text-right">
+                    <td class="hidden xl:table-cell px-6 py-4 text-right">
                         <div class="font-bold text-slate-700 dark:text-slate-200 tracking-tight">$<%= Number(acc.balance).toLocaleString() %></div>
                     </td>
                     <td class="px-6 py-4 text-center">

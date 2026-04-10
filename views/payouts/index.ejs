@@ -12,9 +12,9 @@
             <thead>
                 <tr class="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-700">
                     <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Account Information</th>
-                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">Balance</th>
+                    <th class="hidden xl:table-cell px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">Balance</th>
                     <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">Amount</th>
-                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">Certificate</th>
+                    <th class="hidden xl:table-cell px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">Certificate</th>
                     <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">Status</th>
                     <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">Actions</th>
                 </tr>
@@ -28,23 +28,20 @@
                             ID: #<%= p.account_login_id || 'N/A' %>
                         </div>
                     </td>
-                    <td class="px-6 py-4 text-right">
-                        <span class="text-xs font-medium text-slate-500 dark:text-slate-400">$<%= p.account_balance ? Number(p.account_balance).toLocaleString() : '-' %></span>
+                    <td class="hidden xl:table-cell px-6 py-4 text-right">
+                        <span class="text-xs font-medium text-slate-500 dark:text-slate-400">$<%= p.account_balance ? Number(p.account_balance).toLocaleString() : (p.balance ? Number(p.balance).toLocaleString() : '0') %></span>
                     </td>
                     <td class="px-6 py-4 text-right">
-                        <div class="font-bold text-emerald-500 tracking-tight">$<%= Number(p.amount).toLocaleString() %></div>
-                        <div class="text-[9px] text-slate-400 uppercase font-bold"><%= moment(p.request_date).format('MMM DD, YYYY') %></div>
+                        <div class="font-black text-emerald-500 text-sm md:text-base">$<%= Number(p.amount).toLocaleString() %></div>
+                        <div class="xl:hidden text-[9px] text-slate-400 font-bold uppercase"><%= moment(p.request_date).format('MMM DD, YYYY') %></div>
                     </td>
-                    <td class="px-6 py-4 text-center">
-                        <% if (p.certificate) { %>
-                            <div class="flex justify-center">
-                                <img src="<%= p.certificate %>" 
-                                     class="w-10 h-10 object-cover rounded-lg border-2 border-slate-200 dark:border-slate-700 cursor-pointer hover:scale-110 transition-transform shadow-sm" 
-                                     onclick="previewImage('<%= p.certificate %>')"
-                                     alt="Cert">
-                            </div>
+                    <td class="hidden xl:table-cell px-6 py-4 text-center">
+                        <% if (p.proof_url || p.certificate) { %>
+                            <a href="<%= p.proof_url || p.certificate %>" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg text-[10px] font-black uppercase transition-all hover:ring-2 hover:ring-blue-500/20">
+                                <i data-lucide="external-link" class="w-3.5 h-3.5"></i> View
+                            </a>
                         <% } else { %>
-                            <span class="text-slate-300 dark:text-slate-600 text-[10px] font-bold uppercase italic">No File</span>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase">N/A</span>
                         <% } %>
                     </td>
                     <td class="px-6 py-4 text-center">
