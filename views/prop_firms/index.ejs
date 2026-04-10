@@ -6,7 +6,8 @@
         </button>
     </div>
 
-    <div class="overflow-x-auto">
+    <!-- Desktop Table View -->
+    <div class="hidden md:block overflow-x-auto">
         <table class="w-full text-left">
             <thead>
                 <tr class="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-700">
@@ -37,26 +38,59 @@
                     </td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex justify-end gap-2">
-                            <button class="p-2 text-slate-400 hover:text-blue-600 bg-slate-100 dark:bg-slate-700 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-all" onclick="showEditFirmModal(<%= JSON.stringify(firm) %>)" title="Edit">
-                                ✏️
+                            <button class="p-2 text-slate-400 hover:text-blue-600 bg-slate-100 dark:bg-slate-700 rounded-lg transition-all" onclick="showEditFirmModal(<%= JSON.stringify(firm) %>)">
+                                <i data-lucide="edit-3" class="w-4 h-4"></i>
                             </button>
                             <form action="/propfirms/<%= firm.id %>?_method=DELETE" method="POST" class="delete-form">
-                                <button type="submit" class="p-2 text-slate-400 hover:text-rose-600 bg-slate-100 dark:bg-slate-700 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg transition-all" title="Delete">
-                                    🗑️
+                                <button type="submit" class="p-2 text-slate-400 hover:text-rose-600 bg-slate-100 dark:bg-slate-700 rounded-lg">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
                                 </button>
                             </form>
                         </div>
                     </td>
                 </tr>
                 <% }) %>
-                <% if (firms.length === 0) { %>
-                <tr>
-                    <td colspan="5" class="px-6 py-12 text-center text-slate-400 italic">No prop firms found in database.</td>
-                </tr>
-                <% } %>
             </tbody>
         </table>
     </div>
+
+    <!-- Mobile Card View -->
+    <div class="md:hidden divide-y divide-slate-100 dark:divide-slate-700">
+        <% firms.forEach(firm => { %>
+        <div class="p-5 space-y-4">
+            <div class="flex justify-between items-start">
+                <div>
+                    <div class="text-[10px] text-slate-400 font-black uppercase tracking-widest">PROP FIRM ID #<%= firm.id %></div>
+                    <div class="font-black text-slate-800 dark:text-slate-100 text-lg mt-0.5"><%= firm.name %></div>
+                    <% if (firm.website) { %>
+                        <a href="<%= firm.website %>" target="_blank" class="text-blue-500 text-xs font-bold flex items-center gap-1 mt-1">
+                            <%= new URL(firm.website).hostname %> ↗
+                        </a>
+                    <% } %>
+                </div>
+                <div class="flex gap-2">
+                    <button class="p-2.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-xl" onclick="showEditFirmModal(<%= JSON.stringify(firm) %>)">
+                        <i data-lucide="edit-3" class="w-4 h-4"></i>
+                    </button>
+                    <form action="/propfirms/<%= firm.id %>?_method=DELETE" method="POST" class="delete-form">
+                        <button type="submit" class="p-2.5 bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 rounded-xl">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800/50 p-4 rounded-2xl">
+                <div class="text-[9px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-1">Total Payout Accumulated</div>
+                <div class="text-2xl font-black text-emerald-500 leading-none">$<%= Number(firm.total_payout || 0).toLocaleString() %></div>
+            </div>
+        </div>
+        <% }) %>
+    </div>
+
+    <% if (firms.length === 0) { %>
+        <div class="px-6 py-12 text-center text-slate-400 italic">No prop firms found.</div>
+    <% } %>
 </div>
 
 <script>

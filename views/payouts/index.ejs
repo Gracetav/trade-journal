@@ -6,7 +6,8 @@
         </a>
     </div>
 
-    <div class="overflow-x-auto">
+    <!-- Desktop Table View -->
+    <div class="hidden md:block overflow-x-auto">
         <table class="w-full text-left border-collapse">
             <thead>
                 <tr class="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-700">
@@ -52,27 +53,79 @@
                         </span>
                     </td>
                     <td class="px-6 py-4 text-right">
-                        <div class="flex justify-end gap-2 text-[18px]">
-                            <a href="/payouts/<%= p.id %>/edit" class="p-2 text-slate-400 hover:text-blue-600 bg-slate-100 dark:bg-slate-700 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-all" title="Edit">
-                                ✏️
+                        <div class="flex justify-end gap-2">
+                            <a href="/payouts/<%= p.id %>/edit" class="p-2 text-slate-400 hover:text-blue-600 bg-slate-100 dark:bg-slate-700 rounded-lg transition-all">
+                                <i data-lucide="edit-3" class="w-4 h-4"></i>
                             </a>
                             <form action="/payouts/<%= p.id %>?_method=DELETE" method="POST" class="delete-form">
-                                <button type="submit" class="p-2 text-slate-400 hover:text-rose-600 bg-slate-100 dark:bg-slate-700 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg transition-all" title="Delete">
-                                    🗑️
+                                <button type="submit" class="p-2 text-slate-400 hover:text-rose-600 bg-slate-100 dark:bg-slate-700 rounded-lg">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
                                 </button>
                             </form>
                         </div>
                     </td>
                 </tr>
                 <% }) %>
-                <% if (payouts.length === 0) { %>
-                <tr>
-                    <td colspan="6" class="px-6 py-12 text-center text-slate-400 italic">No payout history found.</td>
-                </tr>
-                <% } %>
             </tbody>
         </table>
     </div>
+
+    <!-- Mobile Card View -->
+    <div class="md:hidden divide-y divide-slate-100 dark:divide-slate-700">
+        <% payouts.forEach(p => { %>
+        <div class="p-5 space-y-4">
+            <div class="flex justify-between items-start">
+                <div>
+                    <div class="font-black text-slate-800 dark:text-slate-100 text-base leading-tight"><%= p.propfirm_name %></div>
+                    <div class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">ID: #<%= p.account_login_id || 'N/A' %></div>
+                </div>
+                <span class="px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest shadow-sm <%= p.status === 'approved' ? 'bg-emerald-500 text-white' : 'bg-amber-500 text-white' %>">
+                    <%= p.status %>
+                </span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 py-3 px-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800">
+                <div>
+                    <div class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter mb-0.5">Balance</div>
+                    <div class="font-bold text-slate-700 dark:text-slate-300 text-sm">$<%= p.account_balance ? Number(p.account_balance).toLocaleString() : '-' %></div>
+                </div>
+                <div class="text-right">
+                    <div class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter mb-0.5">Amount</div>
+                    <div class="font-black text-emerald-500 text-lg leading-none mt-1">$<%= Number(p.amount).toLocaleString() %></div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-1">
+                <div class="flex items-center gap-3">
+                    <% if (p.certificate) { %>
+                        <img src="<%= p.certificate %>" class="w-10 h-10 object-cover rounded-xl border border-slate-200 dark:border-slate-700" onclick="previewImage('<%= p.certificate %>')">
+                        <div class="text-[10px] text-slate-500 dark:text-slate-400 font-medium italic">Certificate attached</div>
+                    <% } else { %>
+                        <div class="w-10 h-10 bg-slate-100 dark:bg-slate-900 rounded-xl flex items-center justify-center border border-slate-200 dark:border-slate-800">
+                            <i data-lucide="image-off" class="w-4 h-4 text-slate-300"></i>
+                        </div>
+                        <div class="text-[10px] text-slate-400 font-medium italic">No certification</div>
+                    <% } %>
+                </div>
+                <div class="flex gap-2">
+                    <a href="/payouts/<%= p.id %>/edit" class="p-2.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-xl">
+                        <i data-lucide="edit-3" class="w-4 h-4"></i>
+                    </a>
+                    <form action="/payouts/<%= p.id %>?_method=DELETE" method="POST" class="delete-form">
+                        <button type="submit" class="p-2.5 bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 rounded-xl">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div class="text-[9px] text-slate-400 text-center font-bold uppercase tracking-[0.2em] pt-2">Requested on <%= moment(p.request_date).format('MMMM DD, YYYY') %></div>
+        </div>
+        <% }) %>
+    </div>
+
+    <% if (payouts.length === 0) { %>
+        <div class="px-6 py-12 text-center text-slate-400 italic">No payout history found.</div>
+    <% } %>
 </div>
 
 <script>
@@ -81,7 +134,6 @@ function previewImage(url) {
     Swal.fire({
         imageUrl: url,
         imageAlt: 'Payout Certificate',
-        width: '600px',
         showConfirmButton: false,
         background: isDark ? '#1e293b' : '#fff',
         color: isDark ? '#f8fafc' : '#1e293b',
