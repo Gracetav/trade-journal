@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Journal & Prop Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="layout-container">
+        <aside class="sidebar">
+            <a href="/" class="logo" style="font-size: 1.5rem; font-weight: 700; color: var(--primary-color); text-decoration: none;">TradeTracker</a>
+            <ul class="nav-links">
+                <li><a href="/" class="nav-item">Dashboard</a></li>
+                <li><a href="/trades" class="nav-item">Trades</a></li>
+                <li><a href="/accounts" class="nav-item">Accounts</a></li>
+                <li><a href="/payouts" class="nav-item">Payouts</a></li>
+                <li><a href="/purchases" class="nav-item">Purchases</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <div class="container">
+                <%- body %>
+            </div>
+            
+            <footer class="footer">
+                <p>&copy; <%= new Date().getFullYear() %> Trading Journal & Prop Tracker</p>
+            </footer>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Success alerts for CRUD (using URL query params for simplicity)
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('success')) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: urlParams.get('success'),
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            }
+
+            // Active link highlighting
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('.nav-item').forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Global delete confirmation
+            document.querySelectorAll('.delete-form').forEach(form => {
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: 'Apakah kamu yakin?',
+                        text: "Data yang dihapus tidak bisa dikembalikan!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#2563eb',
+                        cancelButtonColor: '#ef4444',
+                        confirmButtonText: 'Ya, hapus!',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

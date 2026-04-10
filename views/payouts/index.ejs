@@ -1,0 +1,39 @@
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Payout History</h2>
+        <a href="/payouts/add" class="btn btn-primary">Request Payout</a>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Account</th>
+                <th>Amount</th>
+                <th>Request Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% payouts.forEach(p => { %>
+            <tr>
+                <td><strong><%= p.account_name %></strong></td>
+                <td>$<%= Number(p.amount).toLocaleString() %></td>
+                <td><%= moment(p.request_date).format('MMM DD, YYYY') %></td>
+                <td><span class="badge badge-<%= p.status %>"><%= p.status %></span></td>
+                <td>
+                    <div style="display: flex; gap: 5px;">
+                        <a href="/payouts/<%= p.id %>/edit" class="btn btn-sm btn-primary">Edit</a>
+                        <form action="/payouts/<%= p.id %>?_method=DELETE" method="POST" class="delete-form">
+                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            <% }) %>
+            <% if (payouts.length === 0) { %>
+            <tr><td colspan="5" style="text-align: center;">No payouts found</td></tr>
+            <% } %>
+        </tbody>
+    </table>
+</div>

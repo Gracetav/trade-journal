@@ -1,0 +1,43 @@
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Prop Firm Accounts</h2>
+        <a href="/accounts/add" class="btn btn-primary">Add New Account</a>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Account Name</th>
+                <th>Prop Firm</th>
+                <th>Type</th>
+                <th>Balance</th>
+                <th>Status</th>
+                <th>Total Payout</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% accounts.forEach(acc => { %>
+            <tr>
+                <td><strong><%= acc.account_name %></strong></td>
+                <td><%= acc.propfirm_name %></td>
+                <td><span class="badge" style="background: #e2e8f0; color: #475569;"><%= acc.account_type %></span></td>
+                <td>$<%= Number(acc.balance).toLocaleString() %></td>
+                <td><span class="badge badge-<%= acc.status %>"><%= acc.status %></span></td>
+                <td>$<%= Number(acc.total_payout).toLocaleString() %></td>
+                <td>
+                    <div style="display: flex; gap: 5px;">
+                        <a href="/accounts/<%= acc.id %>/edit" class="btn btn-sm btn-primary">Edit</a>
+                        <form action="/accounts/<%= acc.id %>?_method=DELETE" method="POST" class="delete-form">
+                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            <% }) %>
+            <% if (accounts.length === 0) { %>
+            <tr><td colspan="6" style="text-align: center;">No accounts found</td></tr>
+            <% } %>
+        </tbody>
+    </table>
+</div>

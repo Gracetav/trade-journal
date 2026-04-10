@@ -1,0 +1,75 @@
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Trading Journal</h2>
+        <a href="/trades/add" class="btn btn-primary">Add New Trade</a>
+    </div>
+
+    <!-- Filters -->
+    <form action="/trades" method="GET" class="card" style="margin-bottom: 1.5rem; background: #f1f5f9;">
+        <div class="grid-2" style="grid-template-columns: repeat(4, 1fr);">
+            <div class="form-group">
+                <input type="text" name="pair" placeholder="Pair (e.g. BTCUSD)" class="form-control" value="<%= filters.pair || '' %>">
+            </div>
+            <div class="form-group">
+                <select name="result" class="form-control">
+                    <option value="">All Results</option>
+                    <option value="win" <%= filters.result === 'win' ? 'selected' : '' %>>Win</option>
+                    <option value="loss" <%= filters.result === 'loss' ? 'selected' : '' %>>Loss</option>
+                    <option value="BE" <%= filters.result === 'BE' ? 'selected' : '' %>>BE</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="date" name="date" class="form-control" value="<%= filters.date || '' %>">
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Filter</button>
+            </div>
+        </div>
+    </form>
+
+    <div style="overflow-x: auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Pair</th>
+                    <th>Setup</th>
+                    <th>RR</th>
+                    <th>Result</th>
+                    <th>PnL</th>
+                    <th>Account</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% trades.forEach(trade => { %>
+                <tr>
+                    <td><%= moment(trade.date).format('MMM DD, YYYY') %></td>
+                    <td><strong><%= trade.pair %></strong> <br><small><%= trade.session %></small></td>
+                    <td><%= trade.setup %></td>
+                    <td><%= trade.entry_price && trade.take_profit ? ((trade.take_profit - trade.entry_price) / (trade.entry_price - trade.stop_loss)).toFixed(2) : 'N/A' %></td>
+                    <td><span class="badge badge-<%= trade.result.toLowerCase() %>"><%= trade.result %></span></td>
+                    <td class="<%= trade.pnl >= 0 ? 'text-success' : 'text-danger' %>">$<%= Number(trade.pnl).toLocaleString() %></td>
+                    <td><%= trade.account_name || 'N/A' %></td>
+                    <td>
+                        <div style="display: flex; gap: 5px;">
+                            <a href="/trades/<%= trade.id %>/edit" class="btn btn-sm btn-primary">Edit</a>
+                            <form action="/trades/<%= trade.id %>?_method=DELETE" method="POST" class="delete-form">
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                <% }) %>
+                <% if (trades.length === 0) { %>
+                <tr><td colspan="8" style="text-align: center;">No trades found</td></tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    .text-success { color: var(--success-color); font-weight: 600; }
+    .text-danger { color: var(--danger-color); font-weight: 600; }
+</style>

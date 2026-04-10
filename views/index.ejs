@@ -1,0 +1,208 @@
+<div class="stats-grid">
+    <div class="stat-card">
+        <h3>Total PnL</h3>
+        <p class="<%= stats.totalPnL >= 0 ? 'text-success' : 'text-danger' %>">$<%= stats.totalPnL.toFixed(2) %></p>
+    </div>
+    <div class="stat-card">
+        <h3>Winrate</h3>
+        <p><%= stats.winrate %>%</p>
+    </div>
+    <div class="stat-card">
+        <h3>Total Accounts</h3>
+        <p><%= stats.totalAccounts %></p>
+    </div>
+</div>
+
+<div class="card financial-summary-card">
+    <div class="financial-stats">
+        <div>
+            <h2 class="card-title" style="margin-bottom: 1.5rem;">Prop Firm Summary</h2>
+            <div class="merged-stats">
+                <div class="m-stat">
+                    <span>Total Payout</span>
+                    <h3 class="text-success">$<%= Number(stats.totalPayout).toLocaleString() %></h3>
+                </div>
+                <div class="m-stat">
+                    <span>Total Spending</span>
+                    <h3 class="text-danger">$<%= Number(stats.totalSpending).toLocaleString() %></h3>
+                </div>
+                <div class="m-stat">
+                    <span>Overall ROI</span>
+                    <h3 class="<%= stats.totalROI >= 0 ? 'text-success' : 'text-danger' %>"><%= stats.totalROI %>%</h3>
+                </div>
+            </div>
+        </div>
+        <div class="chart-container">
+            <canvas id="financialDonutChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('financialDonutChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Total Payout', 'Total Spending'],
+                datasets: [{
+                    data: [<%= stats.totalPayout %>, <%= stats.totalSpending %>],
+                    backgroundColor: ['#10b981', '#ef4444'],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20,
+                            font: { family: 'Poppins' }
+                        }
+                    }
+                },
+                cutout: '70%'
+            }
+        });
+    });
+</script>
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Prop Firm ROI Breakdown</h2>
+    </div>
+    <div class="scrollable-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>Account Name</th>
+                    <th>Investment (Price)</th>
+                    <th>Total Payout</th>
+                    <th>Profit/Loss</th>
+                    <th>ROI (%)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% recentAccounts.forEach(acc => { %>
+                <tr>
+                    <td><strong><%= acc.account_name %></strong></td>
+                    <td>$<%= Number(acc.initial_cost || 0).toLocaleString() %></td>
+                    <td>$<%= Number(acc.total_payout).toLocaleString() %></td>
+                    <td class="<%= (acc.total_payout - acc.initial_cost) >= 0 ? 'text-success' : 'text-danger' %>">
+                        $<%= Number(acc.total_payout - acc.initial_cost).toLocaleString() %>
+                    </td>
+                    <td>
+                        <span class="badge <%= acc.roi >= 0 ? 'badge-win' : 'badge-loss' %>">
+                            <%= acc.roi ? Number(acc.roi).toFixed(2) : '0.00' %>%
+                        </span>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="history-grid">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Account History</h2>
+            <a href="/accounts" class="btn btn-sm btn-primary">View All</a>
+        </div>
+        <div class="scrollable-table">
+            <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Balance</th>
+                    <th>Status</th>
+                    <th>Payout</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% recentAccounts.forEach(acc => { %>
+                <tr>
+                    <td><%= acc.account_name %></td>
+                    <td>$<%= Number(acc.balance).toLocaleString() %></td>
+                    <td><span class="badge badge-<%= acc.status %>"><%= acc.status %></span></td>
+                    <td>$<%= Number(acc.total_payout).toLocaleString() %></td>
+                </tr>
+                <% }) %>
+                <% if (recentAccounts.length === 0) { %>
+                <tr><td colspan="4">No accounts found</td></tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Payout History</h2>
+            <a href="/payouts" class="btn btn-sm btn-primary">View All</a>
+        </div>
+        <div class="scrollable-table">
+            <table>
+            <thead>
+                <tr>
+                    <th>Account</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% recentPayouts.forEach(p => { %>
+                <tr>
+                    <td><%= p.account_name %></td>
+                    <td>$<%= Number(p.amount).toLocaleString() %></td>
+                    <td><span class="badge badge-<%= p.status %>"><%= p.status %></span></td>
+                </tr>
+                <% }) %>
+                <% if (recentPayouts.length === 0) { %>
+                <tr><td colspan="3">No payouts found</td></tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Account Purchase History</h2>
+        <a href="/purchases" class="btn btn-sm btn-primary">View All</a>
+    </div>
+    <div class="scrollable-table">
+        <table>
+        <thead>
+            <tr>
+                <th>Prop Firm</th>
+                <th>Size</th>
+                <th>Price</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% recentPurchases.forEach(p => { %>
+            <tr>
+                <td><%= p.propfirm_name %></td>
+                <td>$<%= Number(p.account_size).toLocaleString() %></td>
+                <td>$<%= Number(p.price).toLocaleString() %></td>
+                <td><%= moment(p.purchase_date).format('MMM DD, YYYY') %></td>
+            </tr>
+            <% }) %>
+            <% if (recentPurchases.length === 0) { %>
+            <tr><td colspan="4">No purchases found</td></tr>
+            <% } %>
+        </tbody>
+    </table>
+    </div>
+</div>
+
+<style>
+    .text-success { color: var(--success-color); }
+    .text-danger { color: var(--danger-color); }
+</style>

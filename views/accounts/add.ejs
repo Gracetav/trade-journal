@@ -1,0 +1,48 @@
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+    <h2 class="card-title">Add New Prop Account</h2>
+    <form action="/accounts" method="POST">
+        <div class="form-group">
+            <label>Account Name</label>
+            <input type="text" name="account_name" class="form-control" placeholder="Phase 1 Challenge" required>
+        </div>
+        <div class="form-group">
+            <label>Prop Firm Name</label>
+            <input type="text" name="propfirm_name" class="form-control" placeholder="FTMO, MyFundedFX, etc." required>
+        </div>
+        <div class="form-group">
+            <label>Account Type</label>
+            <select name="account_type" class="form-control">
+                <option value="instan">Instan</option>
+                <option value="1 step">1 Step</option>
+                <option value="2 step" selected>2 Step</option>
+                <option value="mini">Mini</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Current Balance ($)</label>
+            <input type="number" step="0.01" name="balance" class="form-control" placeholder="10000.00" required>
+        </div>
+        <div class="form-group">
+            <label>Investment (Purchase Price $)</label>
+            <input type="number" step="0.01" name="initial_cost" class="form-control" placeholder="0.00" required>
+        </div>
+        <div class="form-group">
+            <label>Status</label>
+            <select name="status" class="form-control">
+                <option value="challenge">Challenge</option>
+                <option value="active">Active</option>
+                <option value="funded">Funded</option>
+                <option value="breached">Breached</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Total Payout to Date ($)</label>
+            <input type="number" step="0.01" name="total_payout" class="form-control" value="0">
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+            <button type="submit" class="btn btn-primary">Save Account</button>
+            <a href="/accounts" class="btn btn-secondary" style="background: #e2e8f0; color: #475569;">Cancel</a>
+        </div>
+    </form>
+</div>
