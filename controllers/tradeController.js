@@ -3,16 +3,16 @@ const multer = require('multer');
 const path = require('path');
 
 // Multer Storage
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        // Use /tmp for Vercel, ./public/uploads/ for local
-        const dest = process.env.VERCEL ? '/tmp' : './public/uploads/';
-        cb(null, dest);
-    },
-    filename: (req, file, cb) => {
-        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-    }
-});
+const storage = process.env.VERCEL 
+    ? multer.memoryStorage() 
+    : multer.diskStorage({
+        destination: (req, file, cb) => {
+            cb(null, './public/uploads/');
+        },
+        filename: (req, file, cb) => {
+            cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+        }
+    });
 
 const upload = multer({ storage }).single('screenshot');
 
@@ -65,7 +65,7 @@ exports.createTrade = (req, res) => {
         const pnl = req.body.pnl || null;
         const balance = req.body.balance || null;
         
-        const screenshot = req.file ? `/uploads/${req.file.filename}` : null;
+        const screenshot = req.file ? (req.file.filename ? `/uploads/${req.file.filename}` : 'data:image/png;base64,' + req.file.buffer.toString('base64')) : null;
 
         try {
             await db.query(`
@@ -117,7 +117,7 @@ exports.updateTrade = (req, res) => {
 
         if (req.file) {
             updateQuery += ', screenshot=?';
-            params.push(`/uploads/${req.file.filename}`);
+            params.push(req.file.filename ? `/uploads/${req.file.filename}` : 'data:image/png;base64,' + req.file.buffer.toString('base64'));
         }
 
         updateQuery += ' WHERE id=?';

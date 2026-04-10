@@ -3,16 +3,16 @@ const multer = require('multer');
 const path = require('path');
 
 // Multer Storage
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        // Use /tmp for Vercel, ./public/uploads/ for local
-        const dest = process.env.VERCEL ? '/tmp' : './public/uploads/';
-        cb(null, dest);
-    },
-    filename: (req, file, cb) => {
-        cb(null, 'payout-' + Date.now() + path.extname(file.originalname));
-    }
-});
+const storage = process.env.VERCEL 
+    ? multer.memoryStorage() 
+    : multer.diskStorage({
+        destination: (req, file, cb) => {
+            cb(null, './public/uploads/');
+        },
+        filename: (req, file, cb) => {
+            cb(null, 'payout-' + Date.now() + path.extname(file.originalname));
+        }
+    });
 
 const upload = multer({ storage }).single('certificate');
 
@@ -47,7 +47,7 @@ exports.createPayout = (req, res) => {
         const { account_id, status, request_date } = req.body;
         const amount = req.body.amount || 0;
         const account_balance = req.body.account_balance || null;
-        const certificate = req.file ? `/uploads/${req.file.filename}` : null;
+        const certificate = req.file ? (req.file.filename ? `/uploads/${req.file.filename}` : 'data:image/png;base64,' + req.file.buffer.toString('base64')) : null;
 
         try {
             await db.query(`
@@ -90,7 +90,7 @@ exports.updatePayout = (req, res) => {
 
         if (req.file) {
             query += ', certificate=?';
-            params.push(`/uploads/${req.file.filename}`);
+            params.push(req.file.filename ? `/uploads/${req.file.filename}` : 'data:image/png;base64,' + req.file.buffer.toString('base64'));
         }
 
         query += ' WHERE id=?';
