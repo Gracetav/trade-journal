@@ -25,8 +25,8 @@
                     <td class="px-6 py-4 font-bold text-slate-800 dark:text-slate-100"><%= firm.name %></td>
                     <td class="px-6 py-4">
                         <% if (firm.website) { %>
-                            <a href="<%= firm.website %>" target="_blank" class="text-blue-500 hover:text-blue-600 text-sm font-medium flex items-center gap-1 group">
-                                <%= new URL(firm.website).hostname %>
+                            <a href="<%= firm.website.startsWith('http') ? firm.website : 'https://' + firm.website %>" target="_blank" class="text-blue-500 hover:text-blue-600 text-sm font-medium flex items-center gap-1 group">
+                                <%= firm.website.replace(/^https?:\/\/(www\.)?/, '').split('/')[0] %>
                                 <span class="group-hover:translate-x-1 transition-transform">↗</span>
                             </a>
                         <% } else { %>
@@ -38,11 +38,11 @@
                     </td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex justify-end gap-2">
-                            <button class="p-2 text-slate-400 hover:text-blue-600 bg-slate-100 dark:bg-slate-700 rounded-lg transition-all" onclick="showEditFirmModal(<%= JSON.stringify(firm) %>)">
+                            <button class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-100 dark:border-slate-600 text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-all shadow-sm" onclick="showEditFirmModal(<%= JSON.stringify(firm) %>)">
                                 <i data-lucide="edit-3" class="w-4 h-4"></i>
                             </button>
                             <form action="/propfirms/<%= firm.id %>?_method=DELETE" method="POST" class="delete-form">
-                                <button type="submit" class="p-2 text-slate-400 hover:text-rose-600 bg-slate-100 dark:bg-slate-700 rounded-lg">
+                                <button type="submit" class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-100 dark:border-slate-600 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/30 transition-all shadow-sm">
                                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                                 </button>
                             </form>
@@ -63,8 +63,8 @@
                     <div class="text-[10px] text-slate-400 font-black uppercase tracking-widest">PROP FIRM ID #<%= firm.id %></div>
                     <div class="font-black text-slate-800 dark:text-slate-100 text-lg mt-0.5"><%= firm.name %></div>
                     <% if (firm.website) { %>
-                        <a href="<%= firm.website %>" target="_blank" class="text-blue-500 text-xs font-bold flex items-center gap-1 mt-1">
-                            <%= new URL(firm.website).hostname %> ↗
+                        <a href="<%= firm.website.startsWith('http') ? firm.website : 'https://' + firm.website %>" target="_blank" class="text-blue-500 text-xs font-bold flex items-center gap-1 mt-1">
+                            <%= firm.website.replace(/^https?:\/\/(www\.)?/, '').split('/')[0] %> ↗
                         </a>
                     <% } %>
                 </div>
