@@ -40,11 +40,11 @@
             <thead>
                 <tr class="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-700">
                     <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Date & Pair</th>
-                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Setup</th>
-                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">R:R Ratio</th>
+                    <th class="hidden md:table-cell px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Setup</th>
+                    <th class="hidden lg:table-cell px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">R:R Ratio</th>
                     <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">Result</th>
-                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">PnL Result</th>
-                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Account</th>
+                    <th class="px-6 py-2 md:py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">PnL Result</th>
+                    <th class="hidden sm:table-cell px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Account</th>
                     <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">Actions</th>
                 </tr>
             </thead>
@@ -53,15 +53,15 @@
                 <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
                     <td class="px-6 py-4">
                         <div class="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase italic"><%= moment(trade.date).format('MMM DD, YYYY') %></div>
-                        <div class="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-1.5 mt-0.5 tracking-tight">
+                        <div class="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-1.5 mt-0.5 tracking-tight truncate max-w-[100px] md:max-w-none">
                             <%= trade.pair %>
-                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700/50 text-slate-400 font-bold uppercase"><%= trade.session %></span>
+                            <span class="hidden xs:inline-block text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700/50 text-slate-400 font-bold uppercase"><%= trade.session %></span>
                         </div>
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="hidden md:table-cell px-6 py-4">
                         <span class="text-slate-600 dark:text-slate-300 text-sm font-medium"><%= trade.setup %></span>
                     </td>
-                    <td class="px-6 py-4 text-center">
+                    <td class="hidden lg:table-cell px-6 py-4 text-center">
                         <% 
                             let rr = 'N/A';
                             if (trade.entry_price && trade.stop_loss) {
@@ -73,7 +73,7 @@
                         <span class="text-xs font-bold text-slate-500 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 px-2 py-0.5 rounded-lg"><%= rr %> v1</span>
                     </td>
                     <td class="px-6 py-4 text-center">
-                        <span class="px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider
+                        <span class="px-2 py-1 md:px-2.5 md:py-1 rounded-lg text-[9px] md:text-[10px] font-bold uppercase tracking-wider
                             <%= trade.result === 'win' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 
                                (trade.result === 'loss' ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400' : 
                                'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400') %>">
@@ -81,23 +81,23 @@
                         </span>
                     </td>
                     <td class="px-6 py-4 text-right">
-                        <div class="font-bold tracking-tight <%= trade.pnl >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
+                        <div class="font-bold tracking-tight text-sm md:text-base <%= trade.pnl >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
                             <%= trade.pnl >= 0 ? '+' : '-' %>$<%= Math.abs(Number(trade.pnl)).toLocaleString() %>
                         </div>
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="hidden sm:table-cell px-6 py-4">
                         <div class="text-xs text-slate-500 dark:text-slate-400 font-medium truncate max-w-[120px]" title="<%= trade.propfirm_name %>">
                             🏦 <%= trade.propfirm_name || 'N/A' %>
                         </div>
                     </td>
                     <td class="px-6 py-4 text-right">
-                        <div class="flex justify-end gap-2 text-[18px]">
-                            <a href="/trades/<%= trade.id %>/edit" class="p-2 text-slate-400 hover:text-blue-600 bg-slate-100 dark:bg-slate-700 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-all" title="Edit">
-                                ✏️
+                        <div class="flex justify-end gap-1.5 md:gap-2">
+                            <a href="/trades/<%= trade.id %>/edit" class="p-1.5 md:p-2 text-slate-400 hover:text-blue-600 bg-slate-100 dark:bg-slate-700 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-all" title="Edit">
+                                <i data-lucide="edit-3" class="w-4 h-4"></i>
                             </a>
                             <form action="/trades/<%= trade.id %>?_method=DELETE" method="POST" class="delete-form">
-                                <button type="submit" class="p-2 text-slate-400 hover:text-rose-600 bg-slate-100 dark:bg-slate-700 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg transition-all" title="Delete">
-                                    🗑️
+                                <button type="submit" class="p-1.5 md:p-2 text-slate-400 hover:text-rose-600 bg-slate-100 dark:bg-slate-700 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg transition-all" title="Delete">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
                                 </button>
                             </form>
                         </div>

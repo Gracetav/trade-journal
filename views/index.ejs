@@ -165,40 +165,39 @@
 </div>
 
 <!-- Monthly Business ROI Overview -->
+<!-- Monthly Business ROI Overview -->
 <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 mb-8 overflow-hidden">
-    <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
-        <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-            <i data-lucide="calendar" class="w-5 h-5 text-blue-500"></i> Monthly ROI Overview
+    <div class="px-4 md:px-6 py-4 md:py-5 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
+        <h2 class="text-base md:text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+            <i data-lucide="calendar" class="w-5 h-5 text-blue-500"></i> Monthly ROI
         </h2>
-        <span class="text-xs font-bold text-blue-600 bg-blue-50 dark:bg-blue-900/30 px-3 py-1 rounded-full uppercase tracking-tighter">Performance History</span>
+        <span class="text-[9px] md:text-xs font-bold text-blue-600 bg-blue-50 dark:bg-blue-900/30 px-2 md:px-3 py-1 rounded-full uppercase tracking-tighter">History</span>
     </div>
     <div class="overflow-x-auto">
-        <table class="w-full text-left">
+        <table class="w-full text-left min-w-[600px] md:min-w-0">
             <thead>
                 <tr class="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-700">
-                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Month / Period</th>
-                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Net Profit</th>
-                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">Investment</th>
-                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">Total Payout</th>
-                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">ROI (%)</th>
+                    <th class="px-4 md:px-6 py-4 text-[10px] md:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Month</th>
+                    <th class="px-4 md:px-6 py-4 text-[10px] md:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Net Profit</th>
+                    <th class="px-4 md:px-6 py-4 text-[10px] md:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">Cost</th>
+                    <th class="px-4 md:px-6 py-4 text-[10px] md:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">Payout</th>
+                    <th class="px-4 md:px-6 py-4 text-[10px] md:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">ROI</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                 <% monthlyROI.forEach(item => { %>
                 <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
-                    <td class="px-6 py-4">
-                        <div class="font-bold text-slate-800 dark:text-slate-100"><%= item.month_label %></div>
-                        <div class="text-[10px] text-slate-400 font-bold tracking-tight mt-0.5">Prop Firm Business Performance</div>
+                    <td class="px-4 md:px-6 py-4">
+                        <div class="font-bold text-slate-800 dark:text-slate-100 text-sm"><%= item.month_label %></div>
+                        <div class="hidden md:block text-[10px] text-slate-400 font-bold tracking-tight mt-0.5 uppercase">Performance</div>
                     </td>
-                    <td class="px-6 py-4">
-                        <span class="text-sm font-black <%= item.net_profit >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
-                            $<%= Number(item.net_profit).toLocaleString() %>
-                        </span>
+                    <td class="px-4 md:px-6 py-4 text-sm font-black <%= item.net_profit >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
+                        $<%= Number(item.net_profit).toLocaleString() %>
                     </td>
-                    <td class="px-6 py-4 text-slate-500 dark:text-slate-400 font-bold text-right">$<%= Number(item.total_spending).toLocaleString() %></td>
-                    <td class="px-6 py-4 text-emerald-500 font-black text-right">$<%= Number(item.total_payout).toLocaleString() %></td>
-                    <td class="px-6 py-4 text-right">
-                        <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-black <%= item.roi_percent >= 0 ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400' : 'bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400' %>">
+                    <td class="px-4 md:px-6 py-4 text-slate-500 dark:text-slate-400 font-bold text-right text-xs">$<%= Number(item.total_spending).toLocaleString() %></td>
+                    <td class="px-4 md:px-6 py-4 text-emerald-500 font-black text-right text-xs">$<%= Number(item.total_payout).toLocaleString() %></td>
+                    <td class="px-4 md:px-6 py-4 text-right">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] md:text-xs font-black <%= item.roi_percent >= 0 ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400' : 'bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400' %>">
                             <%= item.roi_percent ? Number(item.roi_percent).toFixed(1) : '0.0' %>%
                         </span>
                     </td>
@@ -206,7 +205,7 @@
                 <% }) %>
                 <% if (monthlyROI.length === 0) { %>
                     <tr>
-                        <td colspan="5" class="px-6 py-12 text-center text-slate-400 italic">No monthly data available yet. Start tracking your purchases and payouts!</td>
+                        <td colspan="5" class="px-6 py-12 text-center text-slate-400 italic">No data.</td>
                     </tr>
                 <% } %>
             </tbody>
@@ -221,22 +220,22 @@
             <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
                 <i data-lucide="receipt" class="w-5 h-5 text-emerald-500"></i> Revenue Stream
             </h2>
-            <a href="/payouts" class="text-[10px] font-bold text-blue-600 hover:text-blue-700 transition-colors uppercase tracking-widest bg-blue-50 dark:bg-blue-900/30 px-3 py-1 rounded-full">Explore History &rarr;</a>
+            <a href="/payouts" class="text-[10px] font-bold text-blue-600 hover:text-blue-700 transition-colors uppercase tracking-widest bg-blue-50 dark:bg-blue-900/30 px-3 py-1 rounded-full">All &rarr;</a>
         </div>
         <div class="divide-y divide-slate-100 dark:divide-slate-700 flex-grow">
             <% recentPayouts.slice(0, 5).forEach(p => { %>
             <div class="px-6 py-4 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors group">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl flex items-center justify-center">
-                        <i data-lucide="arrow-down-left" class="w-5 h-5 text-emerald-500 group-hover:scale-110 transition-transform"></i>
+                <div class="flex items-center gap-3 md:gap-4 overflow-hidden">
+                    <div class="w-8 h-8 md:w-10 md:h-10 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl flex items-center justify-center shrink-0">
+                        <i data-lucide="arrow-down-left" class="w-4 h-4 md:w-5 md:h-5 text-emerald-500 group-hover:scale-110 transition-transform"></i>
                     </div>
-                    <div>
-                        <p class="font-bold text-slate-800 dark:text-slate-100 truncate max-w-[150px]"><%= p.propfirm_name %></p>
-                        <p class="text-[9px] text-slate-400 uppercase font-black mt-0.5 tracking-tighter">ID: #<%= p.account_login_id || 'N/A' %> | Approved <%= new Date(p.request_date).toLocaleDateString() %></p>
+                    <div class="truncate">
+                        <p class="font-bold text-slate-800 dark:text-slate-100 text-sm truncate max-w-[100px] md:max-w-none"><%= p.propfirm_name %></p>
+                        <p class="text-[9px] text-slate-400 uppercase font-black mt-0.5 tracking-tighter truncate">ID: #<%= p.account_login_id || 'N/A' %> | Approved <%= new Date(p.request_date).toLocaleDateString() %></p>
                     </div>
                 </div>
-                <div class="text-right">
-                    <p class="text-emerald-500 font-black text-lg">$<%= Number(p.amount).toLocaleString() %></p>
+                <div class="text-right shrink-0">
+                    <p class="text-emerald-500 font-black text-base md:text-lg">$<%= Number(p.amount).toLocaleString() %></p>
                     <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter border border-slate-100 dark:border-slate-700 px-1.5 py-0.5 rounded-md"><%= p.status %></span>
                 </div>
             </div>
