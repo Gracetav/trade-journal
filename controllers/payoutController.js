@@ -15,7 +15,7 @@ const upload = multer({ storage }).single('certificate');
 exports.getPayouts = async (req, res) => {
     try {
         const [payouts] = await db.query(`
-            SELECT p.*, a.account_name, pf.name as propfirm_name, a.account_login_id
+            SELECT p.*, pf.name as propfirm_name, a.account_login_id
             FROM payouts p 
             JOIN prop_accounts a ON p.account_id = a.id 
             LEFT JOIN prop_firms pf ON a.prop_firm_id = pf.id
@@ -29,7 +29,11 @@ exports.getPayouts = async (req, res) => {
 };
 
 exports.addPayoutForm = async (req, res) => {
-    const [accounts] = await db.query('SELECT id, account_name, propfirm_name FROM prop_accounts');
+    const [accounts] = await db.query(`
+        SELECT a.id, pf.name as propfirm_name, a.account_login_id 
+        FROM prop_accounts a 
+        LEFT JOIN prop_firms pf ON a.prop_firm_id = pf.id
+    `);
     res.render('payouts/add', { accounts });
 };
 
@@ -57,7 +61,11 @@ exports.createPayout = (req, res) => {
 exports.editPayoutForm = async (req, res) => {
     try {
         const [payouts] = await db.query('SELECT * FROM payouts WHERE id = ?', [req.params.id]);
-        const [accounts] = await db.query('SELECT id, account_name, propfirm_name FROM prop_accounts');
+        const [accounts] = await db.query(`
+            SELECT a.id, pf.name as propfirm_name, a.account_login_id 
+            FROM prop_accounts a 
+            LEFT JOIN prop_firms pf ON a.prop_firm_id = pf.id
+        `);
         if (payouts.length === 0) return res.redirect('/payouts');
         res.render('payouts/edit', { payout: payouts[0], accounts });
     } catch (err) {

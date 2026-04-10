@@ -62,17 +62,18 @@ exports.getDashboard = async (req, res) => {
         const [recentAccounts] = await db.query(`
             SELECT a.*, pf.name as propfirm_name,
             ((a.total_payout - a.initial_cost) / NULLIF(a.initial_cost, 0) * 100) as roi,
-            (a.balance - a.account_size) as current_profit,
-            (CASE WHEN a.target_profit > 0 THEN ((a.balance - a.account_size) / a.target_profit * 100) ELSE 0 END) as target_progress
+            0 as current_profit,
+            0 as target_progress
             FROM prop_accounts a 
             LEFT JOIN prop_firms pf ON a.prop_firm_id = pf.id
             ORDER BY a.created_at DESC LIMIT 20
         `);
         
         const [recentPayouts] = await db.query(`
-            SELECT p.*, a.account_name 
+            SELECT p.*, pf.name as propfirm_name, a.account_login_id
             FROM payouts p 
             JOIN prop_accounts a ON p.account_id = a.id 
+            LEFT JOIN prop_firms pf ON a.prop_firm_id = pf.id
             ORDER BY p.request_date DESC LIMIT 20
         `);
 

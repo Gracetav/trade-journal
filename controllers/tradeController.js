@@ -15,7 +15,7 @@ const upload = multer({ storage }).single('screenshot');
 exports.getTrades = async (req, res) => {
     try {
         const { pair, result, date } = req.query;
-        let query = 'SELECT t.*, a.account_name FROM trades t LEFT JOIN prop_accounts a ON t.account_id = a.id WHERE 1=1';
+        let query = 'SELECT t.*, pf.name as propfirm_name FROM trades t LEFT JOIN prop_accounts a ON t.account_id = a.id LEFT JOIN prop_firms pf ON a.prop_firm_id = pf.id WHERE 1=1';
         let params = [];
 
         if (pair) {
@@ -41,7 +41,11 @@ exports.getTrades = async (req, res) => {
 };
 
 exports.addTradeForm = async (req, res) => {
-    const [accounts] = await db.query('SELECT id, account_name FROM prop_accounts');
+    const [accounts] = await db.query(`
+        SELECT a.id, pf.name as propfirm_name, a.account_login_id 
+        FROM prop_accounts a 
+        LEFT JOIN prop_firms pf ON a.prop_firm_id = pf.id
+    `);
     res.render('trades/add', { accounts });
 };
 
@@ -75,7 +79,11 @@ exports.createTrade = (req, res) => {
 exports.editTradeForm = async (req, res) => {
     try {
         const [trades] = await db.query('SELECT * FROM trades WHERE id = ?', [req.params.id]);
-        const [accounts] = await db.query('SELECT id, account_name FROM prop_accounts');
+        const [accounts] = await db.query(`
+            SELECT a.id, pf.name as propfirm_name, a.account_login_id 
+            FROM prop_accounts a 
+            LEFT JOIN prop_firms pf ON a.prop_firm_id = pf.id
+        `);
         if (trades.length === 0) return res.redirect('/trades');
         res.render('trades/edit', { trade: trades[0], accounts });
     } catch (err) {

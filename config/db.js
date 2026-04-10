@@ -6,8 +6,10 @@ const pool = mysql.createPool({
     user: process.env.DB_USER,
     password: process.env.DB_PASS,
     database: process.env.DB_NAME,
+    port: process.env.DB_PORT || 3306,
     waitForConnections: true,
-    connectionLimit: 10,
+    connectionLimit: 3, // Dihemat sesuai kebutuhan dashboard
+    idleTimeout: 10000, // Tutup koneksi otomatis setelah 10 detik idle
     queueLimit: 0
 });
 

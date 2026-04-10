@@ -10,20 +10,15 @@ async function migrate() {
         port: process.env.DB_PORT || 3306
     });
 
-    console.log('Migrating database for ROI...');
-
     try {
-        await connection.query(`
-            ALTER TABLE prop_accounts 
-            ADD COLUMN initial_cost DECIMAL(15, 2) DEFAULT 0
-            AFTER balance;
-        `);
-        console.log('Added initial_cost to prop_accounts');
+        console.log('Dropping current_balance column from prop_accounts...');
+        await connection.query('ALTER TABLE prop_accounts DROP COLUMN current_balance');
+        console.log('Migration successful: current_balance removed.');
     } catch (err) {
-        if (err.code === 'ER_DUP_COLUMN_NAME') {
-            console.log('initial_cost already exists');
+        if (err.code === 'ER_CANT_DROP_FIELD_OR_KEY') {
+            console.log('Column current_balance already dropped or does not exist.');
         } else {
-            console.error('Migration error:', err);
+            console.error('Migration failed:', err);
         }
     } finally {
         await connection.end();

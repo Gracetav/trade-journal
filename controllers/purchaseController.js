@@ -26,26 +26,34 @@ exports.addPurchaseForm = async (req, res) => {
 };
 
 exports.createPurchase = async (req, res) => {
-    const { prop_firm_id, account_login_id, account_size, account_type, price, purchase_date } = req.body;
+    let { prop_firm_id, account_login_id, account_size, account_type, price, purchase_date } = req.body;
+    
+    // Convert single entries to arrays for uniform processing
+    if (!Array.isArray(prop_firm_id)) {
+        prop_firm_id = [prop_firm_id];
+        account_login_id = [account_login_id];
+        account_size = [account_size];
+        account_type = [account_type];
+        price = [price];
+        purchase_date = [purchase_date];
+    }
+
     try {
-        // 1. Get firm name for auto-naming
-        const [[firm]] = await db.query('SELECT name FROM prop_firms WHERE id = ?', [prop_firm_id]);
-        const firmName = firm ? firm.name : 'Unknown';
+        for (let i = 0; i < prop_firm_id.length; i++) {
+            // 2. Log the purchase
+            await db.query(`
+                INSERT INTO account_purchases (prop_firm_id, account_login_id, account_size, account_type, price, purchase_date)
+                VALUES (?, ?, ?, ?, ?, ?)
+            `, [prop_firm_id[i], account_login_id[i], account_size[i] || 0, account_type[i], price[i] || 0, purchase_date[i]]);
 
-        // 2. Log the purchase
-        await db.query(`
-            INSERT INTO account_purchases (prop_firm_id, account_login_id, account_size, account_type, price, purchase_date)
-            VALUES (?, ?, ?, ?, ?, ?)
-        `, [prop_firm_id, account_login_id, account_size, account_type, price, purchase_date]);
+            // 3. Automatically create the account in prop_accounts
+            await db.query(`
+                INSERT INTO prop_accounts (prop_firm_id, account_login_id, account_type, balance, initial_cost, status, total_payout)
+                VALUES (?, ?, ?, ?, ?, 'active', 0)
+            `, [prop_firm_id[i], account_login_id[i] || null, account_type[i], account_size[i] || 0, price[i] || 0]);
+        }
 
-        // 3. Automatically create the account in prop_accounts
-        const accountName = `${firmName} ${account_type.toUpperCase()}`;
-        await db.query(`
-            INSERT INTO prop_accounts (account_name, prop_firm_id, account_login_id, account_type, account_size, balance, initial_cost, status, total_payout)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'active', 0)
-        `, [accountName, prop_firm_id, account_login_id, account_type, account_size, account_size, price]);
-
-        res.redirect('/purchases?success=Purchase logged and account created');
+        res.redirect('/purchases?success=Purchases logged and accounts created');
     } catch (err) {
         console.error(err);
         res.status(500).send('Server Error');

@@ -1,6 +1,3 @@
-CREATE DATABASE IF NOT EXISTS trading_journal_db;
-USE trading_journal_db;
-
 CREATE TABLE IF NOT EXISTS prop_firms (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL UNIQUE,
@@ -10,14 +7,13 @@ CREATE TABLE IF NOT EXISTS prop_firms (
 
 CREATE TABLE IF NOT EXISTS prop_accounts (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    account_name VARCHAR(100) NOT NULL,
     prop_firm_id INT,
     account_login_id VARCHAR(100),
     account_type ENUM('instan', '1 step', '2 step', 'mini') DEFAULT '2 step',
-    account_size DECIMAL(15, 2) NOT NULL DEFAULT 0,
-    balance DECIMAL(15, 2) NOT NULL,
+    balance DECIMAL(15, 2) NOT NULL DEFAULT 0,
     initial_cost DECIMAL(15, 2) DEFAULT 0,
-    status ENUM('active', 'breached') DEFAULT 'active',
+    target_profit DECIMAL(15, 2) DEFAULT 0,
+    status ENUM('active', 'passed', 'funded', 'breached') DEFAULT 'active',
     total_payout DECIMAL(15, 2) DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (prop_firm_id) REFERENCES prop_firms(id) ON DELETE SET NULL

@@ -26,16 +26,14 @@ exports.addAccountForm = async (req, res) => {
 };
 
 exports.createAccount = async (req, res) => {
-    const { account_name, prop_firm_id, account_login_id, account_type, status } = req.body;
-    const account_size = req.body.account_size || 0;
+    const { prop_firm_id, account_login_id, account_type, status, target_profit } = req.body;
     const balance = req.body.balance || 0;
     const initial_cost = req.body.initial_cost || 0;
-    const total_payout = req.body.total_payout || 0;
     try {
         await db.query(`
-            INSERT INTO prop_accounts (account_name, prop_firm_id, account_login_id, account_type, account_size, balance, initial_cost, status, total_payout)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `, [account_name, prop_firm_id, account_login_id, account_type, account_size, balance, initial_cost, status, total_payout]);
+            INSERT INTO prop_accounts (prop_firm_id, account_login_id, account_type, balance, initial_cost, target_profit, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        `, [prop_firm_id, account_login_id || null, account_type, balance, initial_cost, target_profit || 0, status || 'active']);
         res.redirect('/accounts?success=Account added successfully');
     } catch (err) {
         console.error(err);
@@ -56,16 +54,17 @@ exports.editAccountForm = async (req, res) => {
 };
 
 exports.updateAccount = async (req, res) => {
-    const { account_name, prop_firm_id, account_login_id, account_type, status } = req.body;
-    const account_size = req.body.account_size || 0;
+    const { prop_firm_id, account_login_id, account_type, status } = req.body;
     const balance = req.body.balance || 0;
     const initial_cost = req.body.initial_cost || 0;
     const total_payout = req.body.total_payout || 0;
     try {
         await db.query(`
-            UPDATE prop_accounts SET account_name=?, prop_firm_id=?, account_login_id=?, account_type=?, account_size=?, balance=?, initial_cost=?, status=?, total_payout=?
+            UPDATE prop_accounts SET 
+            prop_firm_id=?, account_login_id=?, account_type=?, balance=?, initial_cost=?, 
+            status=?, total_payout=?
             WHERE id=?
-        `, [account_name, prop_firm_id, account_login_id, account_type, account_size, balance, initial_cost, status, total_payout, req.params.id]);
+        `, [prop_firm_id, account_login_id || null, account_type, balance, initial_cost, status, total_payout || 0, req.params.id]);
         res.redirect('/accounts?success=Account updated successfully');
     } catch (err) {
         console.error(err);
@@ -87,7 +86,7 @@ exports.updateStatus = async (req, res) => {
     const { status } = req.body;
     try {
         await db.query('UPDATE prop_accounts SET status = ? WHERE id = ?', [status, req.params.id]);
-        res.redirect('/accounts?success=Status updated successfully');
+        res.redirect('/accounts');
     } catch (err) {
         console.error(err);
         res.status(500).send('Server Error');

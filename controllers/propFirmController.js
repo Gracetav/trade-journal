@@ -2,7 +2,14 @@ const db = require('../config/db');
 
 exports.getPropFirms = async (req, res) => {
     try {
-        const [firms] = await db.query('SELECT * FROM prop_firms ORDER BY name ASC');
+        const [firms] = await db.query(`
+            SELECT pf.*, COALESCE(SUM(p.amount), 0) as total_payout
+            FROM prop_firms pf
+            LEFT JOIN prop_accounts pa ON pf.id = pa.prop_firm_id
+            LEFT JOIN payouts p ON pa.id = p.account_id AND p.status = 'approved'
+            GROUP BY pf.id
+            ORDER BY pf.name ASC
+        `);
         res.render('prop_firms/index', { firms });
     } catch (err) {
         console.error(err);

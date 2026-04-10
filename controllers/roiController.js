@@ -28,7 +28,7 @@ exports.getROI = async (req, res) => {
         `);
 
         const [rawPayouts] = await db.query(`
-            SELECT p.amount, p.request_date, a.account_name, pf.name as propfirm_name, DATE_FORMAT(p.request_date, '%Y-%m') as month
+            SELECT p.amount, p.request_date, pf.name as propfirm_name, a.account_login_id, DATE_FORMAT(p.request_date, '%Y-%m') as month
             FROM payouts p
             JOIN prop_accounts a ON p.account_id = a.id
             LEFT JOIN prop_firms pf ON a.prop_firm_id = pf.id

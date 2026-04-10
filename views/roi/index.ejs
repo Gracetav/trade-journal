@@ -89,7 +89,7 @@
                 <tr class="bg-slate-50 dark:bg-slate-900/50">
                     <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Prop Firm</th>
                     <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Type</th>
-                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Size</th>
+                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Balance</th>
                     <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Invest</th>
                     <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Returns</th>
                     <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">ROI (%)</th>
@@ -106,7 +106,7 @@
                     <td class="px-6 py-4">
                         <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-700 rounded text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercaseTracking-widest"><%= acc.account_type %></span>
                     </td>
-                    <td class="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">$<%= Number(acc.account_size).toLocaleString() %></td>
+                    <td class="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">$<%= Number(acc.balance).toLocaleString() %></td>
                     <td class="px-6 py-4 text-rose-500/80 font-medium">$<%= Number(acc.initial_cost || 0).toLocaleString() %></td>
                     <td class="px-6 py-4 text-emerald-500 font-bold">$<%= Number(acc.total_payout).toLocaleString() %></td>
                     <td class="px-6 py-4">
@@ -162,7 +162,7 @@
         } else {
             data.items.payouts.forEach(p => {
                 payoutsHtml += `<tr>
-                    <td class="px-4 py-3 font-bold text-slate-700 dark:text-slate-300"><strong>${p.propfirm_name}</strong><div class="text-[10px] text-slate-400 uppercase">${p.account_name}</div></td>
+                    <td class="px-4 py-3 font-bold text-slate-700 dark:text-slate-300"><strong>${p.propfirm_name}</strong>${p.account_login_id ? `<div class="text-[10px] text-slate-400 uppercase">ID: #${p.account_login_id}</div>` : ''}</td>
                     <td class="px-4 py-3 text-emerald-500 font-bold text-right">$${Number(p.amount).toLocaleString()}</td>
                 </tr>`;
             });
