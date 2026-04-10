@@ -87,13 +87,15 @@
                         </div>
                     </td>
                     <td class="px-6 py-4 text-right">
-                        <div class="flex justify-end gap-1.5 md:gap-2">
-                            <a href="/trades/<%= trade.id %>/edit" class="p-1.5 md:p-2 text-slate-400 hover:text-blue-600 bg-slate-100 dark:bg-slate-700 rounded-lg transition-all">
-                                <i data-lucide="edit-3" class="w-4 h-4"></i>
+                        <div class="flex justify-end gap-2">
+                            <a href="/trades/<%= trade.id %>/edit" 
+                               class="w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-100 dark:border-slate-600 text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-all shadow-sm">
+                                <i data-lucide="edit-3" class="w-3.5 h-3.5 md:w-4 md:h-4"></i>
                             </a>
                             <form action="/trades/<%= trade.id %>?_method=DELETE" method="POST" class="delete-form">
-                                <button type="submit" class="p-1.5 md:p-2 text-slate-400 hover:text-rose-600 bg-slate-100 dark:bg-slate-700 rounded-lg">
-                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                <button type="submit" 
+                                        class="w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-100 dark:border-slate-600 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/30 transition-all shadow-sm">
+                                    <i data-lucide="trash-2" class="w-3.5 h-3.5 md:w-4 md:h-4"></i>
                                 </button>
                             </form>
                         </div>

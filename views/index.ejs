@@ -109,13 +109,21 @@
             <div class="space-y-5">
                 <% firmStats.slice(0, 4).forEach((firm, index) => { %>
                 <div class="group relative flex items-center gap-4 p-3 -mx-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-all">
-                    <!-- Rank Badge -->
-                    <div class="w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm shrink-0
-                        <%= index === 0 ? 'bg-amber-100 text-amber-600 border border-amber-200' : 
-                            index === 1 ? 'bg-slate-100 text-slate-500 border border-slate-200' : 
-                            index === 2 ? 'bg-orange-100 text-orange-600 border border-orange-200' : 
+                    <!-- Rank Action Icon -->
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm shrink-0 relative
+                        <%= index === 0 ? 'bg-amber-100 text-amber-600 border border-amber-200 shadow-lg shadow-amber-500/10' : 
+                            index === 1 ? 'bg-slate-100 text-slate-500 border border-slate-200 shadow-lg shadow-slate-500/10' : 
+                            index === 2 ? 'bg-orange-100 text-orange-600 border border-orange-200 shadow-lg shadow-orange-500/10' : 
                             'bg-slate-50 text-slate-400 border border-slate-100 dark:bg-slate-800 dark:border-slate-700' %>">
-                        <%= index + 1 %>
+                        <% if (index === 0) { %>
+                            <i data-lucide="trophy" class="w-5 h-5 animate-pulse"></i>
+                        <% } else if (index === 1) { %>
+                            <i data-lucide="medal" class="w-5 h-5"></i>
+                        <% } else if (index === 2) { %>
+                            <i data-lucide="award" class="w-5 h-5"></i>
+                        <% } else { %>
+                            <span class="text-[10px]"><%= index + 1 %></span>
+                        <% } %>
                     </div>
                     
                     <div class="flex-grow min-w-0">
