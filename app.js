@@ -30,12 +30,16 @@ const tradeRoutes = require('./routes/trades');
 const accountRoutes = require('./routes/accounts');
 const payoutRoutes = require('./routes/payouts');
 const purchaseRoutes = require('./routes/purchases');
+const roiRoutes = require('./routes/roi');
+const propFirmRoutes = require('./routes/propFirms');
 
 app.use('/', dashboardRoutes);
 app.use('/trades', tradeRoutes);
 app.use('/accounts', accountRoutes);
 app.use('/payouts', payoutRoutes);
 app.use('/purchases', purchaseRoutes);
+app.use('/roi', roiRoutes);
+app.use('/propfirms', propFirmRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

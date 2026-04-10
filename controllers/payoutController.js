@@ -1,11 +1,24 @@
 const db = require('../config/db');
+const multer = require('multer');
+const path = require('path');
+
+// Multer Storage
+const storage = multer.diskStorage({
+    destination: './public/uploads/',
+    filename: (req, file, cb) => {
+        cb(null, 'payout-' + Date.now() + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({ storage }).single('certificate');
 
 exports.getPayouts = async (req, res) => {
     try {
         const [payouts] = await db.query(`
-            SELECT p.*, a.account_name 
+            SELECT p.*, a.account_name, pf.name as propfirm_name, a.account_login_id
             FROM payouts p 
             JOIN prop_accounts a ON p.account_id = a.id 
+            LEFT JOIN prop_firms pf ON a.prop_firm_id = pf.id
             ORDER BY p.request_date DESC
         `);
         res.render('payouts/index', { payouts });
@@ -20,19 +33,25 @@ exports.addPayoutForm = async (req, res) => {
     res.render('payouts/add', { accounts });
 };
 
-exports.createPayout = async (req, res) => {
-    const { account_id, status, request_date } = req.body;
-    const amount = req.body.amount || 0;
-    try {
-        await db.query(`
-            INSERT INTO payouts (account_id, amount, status, request_date)
-            VALUES (?, ?, ?, ?)
-        `, [account_id, amount, status, request_date]);
-        res.redirect('/payouts?success=Payout request saved');
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Server Error');
-    }
+exports.createPayout = (req, res) => {
+    upload(req, res, async (err) => {
+        if (err) return res.send(err);
+        const { account_id, status, request_date } = req.body;
+        const amount = req.body.amount || 0;
+        const account_balance = req.body.account_balance || null;
+        const certificate = req.file ? `/uploads/${req.file.filename}` : null;
+
+        try {
+            await db.query(`
+                INSERT INTO payouts (account_id, amount, account_balance, status, request_date, certificate)
+                VALUES (?, ?, ?, ?, ?, ?)
+            `, [account_id, amount, account_balance, status, request_date, certificate]);
+            res.redirect('/payouts?success=Payout request saved');
+        } catch (err) {
+            console.error(err);
+            res.status(500).send('Server Error');
+        }
+    });
 };
 
 exports.editPayoutForm = async (req, res) => {
@@ -47,19 +66,32 @@ exports.editPayoutForm = async (req, res) => {
     }
 };
 
-exports.updatePayout = async (req, res) => {
-    const { account_id, status, request_date } = req.body;
-    const amount = req.body.amount || 0;
-    try {
-        await db.query(`
-            UPDATE payouts SET account_id=?, amount=?, status=?, request_date=?
-            WHERE id=?
-        `, [account_id, amount, status, request_date, req.params.id]);
-        res.redirect('/payouts?success=Payout updated successfully');
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Server Error');
-    }
+exports.updatePayout = (req, res) => {
+    upload(req, res, async (err) => {
+        if (err) return res.send(err);
+        const { account_id, status, request_date } = req.body;
+        const amount = req.body.amount || 0;
+        const account_balance = req.body.account_balance || null;
+
+        let query = 'UPDATE payouts SET account_id=?, amount=?, account_balance=?, status=?, request_date=?';
+        let params = [account_id, amount, account_balance, status, request_date];
+
+        if (req.file) {
+            query += ', certificate=?';
+            params.push(`/uploads/${req.file.filename}`);
+        }
+
+        query += ' WHERE id=?';
+        params.push(req.params.id);
+
+        try {
+            await db.query(query, params);
+            res.redirect('/payouts?success=Payout updated successfully');
+        } catch (err) {
+            console.error(err);
+            res.status(500).send('Server Error');
+        }
+    });
 };
 
 exports.deletePayout = async (req, res) => {

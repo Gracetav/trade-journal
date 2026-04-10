@@ -1,41 +1,61 @@
-<div class="card">
-    <div class="card-header">
-        <h2 class="card-title">Account Purchases</h2>
-        <a href="/purchases/add" class="btn btn-primary">Add Purchase</a>
+<div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
+    <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
+        <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100">Account Purchases</h2>
+        <a href="/purchases/add" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-xl transition-all shadow-lg shadow-blue-500/20 text-sm">
+            + Log Purchase
+        </a>
     </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Prop Firm</th>
-                <th>Account Size</th>
-                <th>Type</th>
-                <th>Price Paid</th>
-                <th>Date</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% purchases.forEach(p => { %>
-            <tr>
-                <td><strong><%= p.propfirm_name %></strong></td>
-                <td>$<%= Number(p.account_size).toLocaleString() %></td>
-                <td><span class="badge" style="background: #e2e8f0; color: #475569;"><%= p.account_type %></span></td>
-                <td>$<%= Number(p.price).toLocaleString() %></td>
-                <td><%= moment(p.purchase_date).format('MMM DD, YYYY') %></td>
-                <td>
-                    <div style="display: flex; gap: 5px;">
-                        <a href="/purchases/<%= p.id %>/edit" class="btn btn-sm btn-primary">Edit</a>
-                        <form action="/purchases/<%= p.id %>?_method=DELETE" method="POST" class="delete-form">
-                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                        </form>
-                    </div>
-                </td>
-            </tr>
-            <% }) %>
-            <% if (purchases.length === 0) { %>
-            <tr><td colspan="5" style="text-align: center;">No purchases found</td></tr>
-            <% } %>
-        </tbody>
-    </table>
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-700">
+                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Prop Firm</th>
+                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">Account Size</th>
+                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">Type</th>
+                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">Price Paid</th>
+                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">Date</th>
+                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
+                <% purchases.forEach(p => { %>
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                    <td class="px-6 py-4">
+                        <div class="font-bold text-slate-800 dark:text-slate-100"><%= p.propfirm_name %></div>
+                        <% if (p.account_login_id) { %>
+                            <div class="text-[10px] text-slate-400 font-bold uppercase tracking-tight mt-0.5">ID: #<%= p.account_login_id %></div>
+                        <% } %>
+                    </td>
+                    <td class="px-6 py-4 text-right font-semibold text-slate-700 dark:text-slate-300 italic">$<%= Number(p.account_size).toLocaleString() %></td>
+                    <td class="px-6 py-4 text-center">
+                        <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase"><%= p.account_type %></span>
+                    </td>
+                    <td class="px-6 py-4 text-right font-bold text-rose-500">$<%= Number(p.price).toLocaleString() %></td>
+                    <td class="px-6 py-4 text-center">
+                        <div class="text-sm text-slate-600 dark:text-slate-400"><%= moment(p.purchase_date).format('MMM DD') %></div>
+                        <div class="text-[10px] text-slate-400"><%= moment(p.purchase_date).format('YYYY') %></div>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex justify-end gap-2 text-[18px]">
+                            <a href="/purchases/<%= p.id %>/edit" class="p-2 text-slate-400 hover:text-blue-600 bg-slate-100 dark:bg-slate-700 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-all" title="Edit">
+                                ✏️
+                            </a>
+                            <form action="/purchases/<%= p.id %>?_method=DELETE" method="POST" class="delete-form">
+                                <button type="submit" class="p-2 text-slate-400 hover:text-rose-600 bg-slate-100 dark:bg-slate-700 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg transition-all" title="Delete">
+                                    🗑️
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                <% }) %>
+                <% if (purchases.length === 0) { %>
+                <tr>
+                    <td colspan="6" class="px-6 py-12 text-center text-slate-400 italic">No purchase records found.</td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
 </div>

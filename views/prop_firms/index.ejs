@@ -1,0 +1,148 @@
+<div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
+    <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
+        <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100">Prop Firm Management</h2>
+        <button onclick="showAddFirmModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-xl transition-all shadow-lg shadow-blue-500/20 text-sm">
+            + Add New Firm
+        </button>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="w-full text-left">
+            <thead>
+                <tr class="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-700">
+                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">ID</th>
+                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Firm Name</th>
+                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Website</th>
+                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
+                <% firms.forEach(firm => { %>
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                    <td class="px-6 py-4 text-sm text-slate-400 font-medium">#<%= firm.id %></td>
+                    <td class="px-6 py-4 font-bold text-slate-800 dark:text-slate-100"><%= firm.name %></td>
+                    <td class="px-6 py-4">
+                        <% if (firm.website) { %>
+                            <a href="<%= firm.website %>" target="_blank" class="text-blue-500 hover:text-blue-600 text-sm font-medium flex items-center gap-1 group">
+                                <%= new URL(firm.website).hostname %>
+                                <span class="group-hover:translate-x-1 transition-transform">↗</span>
+                            </a>
+                        <% } else { %>
+                            <span class="text-slate-300 dark:text-slate-600 text-sm italic">Not set</span>
+                        <% } %>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex justify-end gap-2">
+                            <button class="p-2 text-slate-400 hover:text-blue-600 bg-slate-100 dark:bg-slate-700 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-all" onclick="showEditFirmModal(<%= JSON.stringify(firm) %>)" title="Edit">
+                                ✏️
+                            </button>
+                            <form action="/propfirms/<%= firm.id %>?_method=DELETE" method="POST" class="delete-form">
+                                <button type="submit" class="p-2 text-slate-400 hover:text-rose-600 bg-slate-100 dark:bg-slate-700 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg transition-all" title="Delete">
+                                    🗑️
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                <% }) %>
+                <% if (firms.length === 0) { %>
+                <tr>
+                    <td colspan="4" class="px-6 py-12 text-center text-slate-400 italic">No prop firms found in database.</td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function showAddFirmModal() {
+        const isDark = document.documentElement.classList.contains('dark');
+        Swal.fire({
+            title: '<div class="text-xl font-bold">Add New Prop Firm</div>',
+            html: `
+                <div class="text-left mt-6">
+                    <div class="mb-5">
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Firm Name</label>
+                        <input type="text" id="swal-name" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all" placeholder="e.g. Maven Trading">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Website URL</label>
+                        <input type="url" id="swal-website" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all" placeholder="https://example.com">
+                    </div>
+                </div>
+                <form id="addFirmForm" action="/propfirms" method="POST" class="hidden">
+                    <input type="hidden" name="name" id="hidden-name">
+                    <input type="hidden" name="website" id="hidden-website">
+                </form>
+            `,
+            background: isDark ? '#1e293b' : '#fff',
+            color: isDark ? '#f8fafc' : '#1e293b',
+            showCancelButton: true,
+            confirmButtonText: 'Save Firm',
+            confirmButtonColor: '#2563eb',
+            cancelButtonColor: '#64748b',
+            customClass: {
+                popup: 'rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl',
+                confirmButton: 'px-6 py-2.5 font-bold rounded-xl',
+                cancelButton: 'px-6 py-2.5 font-bold rounded-xl'
+            },
+            preConfirm: () => {
+                const name = document.getElementById('swal-name').value;
+                const website = document.getElementById('swal-website').value;
+                if (!name) {
+                    Swal.showValidationMessage('Please enter a firm name');
+                    return false;
+                }
+                document.getElementById('hidden-name').value = name;
+                document.getElementById('hidden-website').value = website;
+                document.getElementById('addFirmForm').submit();
+            }
+        });
+    }
+
+    function showEditFirmModal(firm) {
+        const isDark = document.documentElement.classList.contains('dark');
+        Swal.fire({
+            title: '<div class="text-xl font-bold">Edit Prop Firm</div>',
+            html: `
+                <div class="text-left mt-6">
+                    <div class="mb-5">
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Firm Name</label>
+                        <input type="text" id="swal-edit-name" value="${firm.name}" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Website URL</label>
+                        <input type="url" id="swal-edit-website" value="${firm.website || ''}" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
+                    </div>
+                </div>
+                <form id="editFirmForm" action="/propfirms/${firm.id}?_method=PUT" method="POST" class="hidden">
+                    <input type="hidden" name="name" id="hidden-edit-name">
+                    <input type="hidden" name="website" id="hidden-edit-website">
+                </form>
+            `,
+            background: isDark ? '#1e293b' : '#fff',
+            color: isDark ? '#f8fafc' : '#1e293b',
+            showCancelButton: true,
+            confirmButtonText: 'Update Firm',
+            confirmButtonColor: '#2563eb',
+            cancelButtonColor: '#64748b',
+            customClass: {
+                popup: 'rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl',
+                confirmButton: 'px-6 py-2.5 font-bold rounded-xl',
+                cancelButton: 'px-6 py-2.5 font-bold rounded-xl'
+            },
+            preConfirm: () => {
+                const name = document.getElementById('swal-edit-name').value;
+                const website = document.getElementById('swal-edit-website').value;
+                if (!name) {
+                    Swal.showValidationMessage('Please enter a firm name');
+                    return false;
+                }
+                document.getElementById('hidden-edit-name').value = name;
+                document.getElementById('hidden-edit-website').value = website;
+                document.getElementById('editFirmForm').submit();
+            }
+        });
+    }
+</script>

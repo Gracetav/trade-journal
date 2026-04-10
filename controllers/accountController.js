@@ -2,7 +2,12 @@ const db = require('../config/db');
 
 exports.getAccounts = async (req, res) => {
     try {
-        const [accounts] = await db.query('SELECT * FROM prop_accounts ORDER BY created_at DESC');
+        const [accounts] = await db.query(`
+            SELECT pa.*, pf.name as propfirm_name 
+            FROM prop_accounts pa
+            LEFT JOIN prop_firms pf ON pa.prop_firm_id = pf.id
+            ORDER BY pa.created_at DESC
+        `);
         res.render('accounts/index', { accounts });
     } catch (err) {
         console.error(err);
@@ -10,20 +15,27 @@ exports.getAccounts = async (req, res) => {
     }
 };
 
-exports.addAccountForm = (req, res) => {
-    res.render('accounts/add');
+exports.addAccountForm = async (req, res) => {
+    try {
+        const [firms] = await db.query('SELECT * FROM prop_firms ORDER BY name ASC');
+        res.render('accounts/add', { firms });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
 };
 
 exports.createAccount = async (req, res) => {
-    const { account_name, propfirm_name, account_type, status } = req.body;
+    const { account_name, prop_firm_id, account_login_id, account_type, status } = req.body;
+    const account_size = req.body.account_size || 0;
     const balance = req.body.balance || 0;
     const initial_cost = req.body.initial_cost || 0;
     const total_payout = req.body.total_payout || 0;
     try {
         await db.query(`
-            INSERT INTO prop_accounts (account_name, propfirm_name, account_type, balance, initial_cost, status, total_payout)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        `, [account_name, propfirm_name, account_type, balance, initial_cost, status, total_payout]);
+            INSERT INTO prop_accounts (account_name, prop_firm_id, account_login_id, account_type, account_size, balance, initial_cost, status, total_payout)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `, [account_name, prop_firm_id, account_login_id, account_type, account_size, balance, initial_cost, status, total_payout]);
         res.redirect('/accounts?success=Account added successfully');
     } catch (err) {
         console.error(err);
@@ -35,7 +47,8 @@ exports.editAccountForm = async (req, res) => {
     try {
         const [accounts] = await db.query('SELECT * FROM prop_accounts WHERE id = ?', [req.params.id]);
         if (accounts.length === 0) return res.redirect('/accounts');
-        res.render('accounts/edit', { account: accounts[0] });
+        const [firms] = await db.query('SELECT * FROM prop_firms ORDER BY name ASC');
+        res.render('accounts/edit', { account: accounts[0], firms });
     } catch (err) {
         console.error(err);
         res.status(500).send('Server Error');
@@ -43,15 +56,16 @@ exports.editAccountForm = async (req, res) => {
 };
 
 exports.updateAccount = async (req, res) => {
-    const { account_name, propfirm_name, account_type, status } = req.body;
+    const { account_name, prop_firm_id, account_login_id, account_type, status } = req.body;
+    const account_size = req.body.account_size || 0;
     const balance = req.body.balance || 0;
     const initial_cost = req.body.initial_cost || 0;
     const total_payout = req.body.total_payout || 0;
     try {
         await db.query(`
-            UPDATE prop_accounts SET account_name=?, propfirm_name=?, account_type=?, balance=?, initial_cost=?, status=?, total_payout=?
+            UPDATE prop_accounts SET account_name=?, prop_firm_id=?, account_login_id=?, account_type=?, account_size=?, balance=?, initial_cost=?, status=?, total_payout=?
             WHERE id=?
-        `, [account_name, propfirm_name, account_type, balance, initial_cost, status, total_payout, req.params.id]);
+        `, [account_name, prop_firm_id, account_login_id, account_type, account_size, balance, initial_cost, status, total_payout, req.params.id]);
         res.redirect('/accounts?success=Account updated successfully');
     } catch (err) {
         console.error(err);

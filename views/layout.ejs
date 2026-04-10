@@ -1,33 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script>
+        // High-priority script to prevent FOUC (Flash of Unstyled Content)
+        (function() {
+            const theme = localStorage.getItem('theme') || 'light';
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trading Journal & Prop Tracker</title>
+    <title>TradeTracker | Premium Journal</title>
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Poppins', 'sans-serif'] },
+                    colors: {
+                        primary: '#2563eb',
+                        surface: {
+                            light: '#ffffff',
+                            dark: '#1e293b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { box-sizing: border-box; }
+        html, body { 
+            overflow-x: hidden; 
+            width: 100%;
+            position: relative;
+        }
+        [data-theme="dark"] { color-scheme: dark; }
+        .nav-item.active { 
+            background-color: #eff6ff;
+            color: #2563eb;
+        }
+        .dark .nav-item.active {
+            background-color: rgba(37, 99, 235, 0.1);
+            color: #60a5fa;
+        }
+        .nav-item.active .icon-box {
+            background-color: #2563eb;
+            border-color: #2563eb;
+        }
+        .nav-item.active .icon-box i {
+            color: #ffffff;
+        }
+        .dark .nav-item.active .icon-box {
+            background-color: #3b82f6;
+            border-color: #3b82f6;
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .dark ::-webkit-scrollbar-thumb { background: #334155; }
+    </style>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body>
-    <div class="layout-container">
-        <aside class="sidebar">
-            <a href="/" class="logo" style="font-size: 1.5rem; font-weight: 700; color: var(--primary-color); text-decoration: none;">TradeTracker</a>
-            <ul class="nav-links">
-                <li><a href="/" class="nav-item">Dashboard</a></li>
-                <li><a href="/trades" class="nav-item">Trades</a></li>
-                <li><a href="/accounts" class="nav-item">Accounts</a></li>
-                <li><a href="/payouts" class="nav-item">Payouts</a></li>
-                <li><a href="/purchases" class="nav-item">Purchases</a></li>
-            </ul>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 transition-colors duration-300 antialiased">
+    <!-- Mobile Header -->
+    <header class="lg:hidden fixed top-0 left-0 w-full h-16 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 z-40 flex items-center justify-between px-6">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/30">
+                <i data-lucide="line-chart" class="w-4 h-4 text-white"></i>
+            </div>
+            <span class="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent tracking-tight">TradeTracker</span>
+        </div>
+        <button id="mobile-menu-btn" class="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-colors">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+    </header>
+
+    <!-- Sidebar Backdrop (Mobile) -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 hidden lg:hidden transition-opacity duration-300"></div>
+
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="w-64 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 fixed h-full z-50 transition-all duration-300 -translate-x-full lg:translate-x-0 overflow-y-auto">
+            <div class="p-8 hidden lg:flex items-center gap-3">
+                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/30">
+                    <i data-lucide="line-chart" class="w-5 h-5 text-white"></i>
+                </div>
+                <span class="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent tracking-tight">TradeTracker</span>
+            </div>
+
+            <!-- Close button for mobile -->
+            <div class="lg:hidden p-6 flex justify-end">
+                <button id="close-sidebar-btn" class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <nav class="px-4 mt-2 lg:mt-4 flex flex-col gap-2">
+                <div class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] px-4 mb-2">Main Menu</div>
+                
+                <a href="/" class="nav-item group flex items-center gap-4 px-4 py-2.5 rounded-2xl transition-all duration-300">
+                    <div class="icon-box w-10 h-10 rounded-xl flex items-center justify-center bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20 transition-all shadow-sm">
+                        <i data-lucide="layout-dashboard" class="w-5 h-5 text-slate-500 group-hover:text-blue-600"></i>
+                    </div>
+                    <span class="text-sm font-bold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-100 transition-colors">Dashboard</span>
+                </a>
+
+                <a href="/trades" class="nav-item group flex items-center gap-4 px-4 py-2.5 rounded-2xl transition-all duration-300">
+                    <div class="icon-box w-10 h-10 rounded-xl flex items-center justify-center bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20 transition-all shadow-sm">
+                        <i data-lucide="book-open" class="w-5 h-5 text-slate-500 group-hover:text-blue-600"></i>
+                    </div>
+                    <span class="text-sm font-bold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-100 transition-colors">Journal</span>
+                </a>
+
+                <div class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] px-4 mt-4 mb-2">Prop Firm Manager</div>
+
+                <a href="/accounts" class="nav-item group flex items-center gap-4 px-4 py-2.5 rounded-2xl transition-all duration-300">
+                    <div class="icon-box w-10 h-10 rounded-xl flex items-center justify-center bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20 transition-all shadow-sm">
+                        <i data-lucide="wallet" class="w-5 h-5 text-slate-500 group-hover:text-blue-600"></i>
+                    </div>
+                    <span class="text-sm font-bold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-100 transition-colors">Accounts</span>
+                </a>
+
+                <a href="/payouts" class="nav-item group flex items-center gap-4 px-4 py-2.5 rounded-2xl transition-all duration-300">
+                    <div class="icon-box w-10 h-10 rounded-xl flex items-center justify-center bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20 transition-all shadow-sm">
+                        <i data-lucide="hand-coins" class="w-5 h-5 text-slate-500 group-hover:text-blue-600"></i>
+                    </div>
+                    <span class="text-sm font-bold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-100 transition-colors">Payouts</span>
+                </a>
+
+                <a href="/purchases" class="nav-item group flex items-center gap-4 px-4 py-2.5 rounded-2xl transition-all duration-300">
+                    <div class="icon-box w-10 h-10 rounded-xl flex items-center justify-center bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20 transition-all shadow-sm">
+                        <i data-lucide="shopping-cart" class="w-5 h-5 text-slate-500 group-hover:text-blue-600"></i>
+                    </div>
+                    <span class="text-sm font-bold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-100 transition-colors">Purchases</span>
+                </a>
+
+                <a href="/propfirms" class="nav-item group flex items-center gap-4 px-4 py-2.5 rounded-2xl transition-all duration-300">
+                    <div class="icon-box w-10 h-10 rounded-xl flex items-center justify-center bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20 transition-all shadow-sm">
+                        <i data-lucide="building-2" class="w-5 h-5 text-slate-500 group-hover:text-blue-600"></i>
+                    </div>
+                    <span class="text-sm font-bold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-100 transition-colors">Prop Firms</span>
+                </a>
+
+                <div class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] px-4 mt-4 mb-2">Analytics</div>
+
+                <a href="/roi" class="nav-item group flex items-center gap-4 px-4 py-2.5 rounded-2xl transition-all duration-300">
+                    <div class="icon-box w-10 h-10 rounded-xl flex items-center justify-center bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20 transition-all shadow-sm">
+                        <i data-lucide="trending-up" class="w-5 h-5 text-slate-500 group-hover:text-blue-600"></i>
+                    </div>
+                    <span class="text-sm font-bold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-100 transition-colors">ROI Analytics</span>
+                </a>
+            </nav>
+
+            <div class="mt-8 mb-6 px-6">
+                <button id="theme-toggle-btn" class="w-full h-12 flex items-center justify-center gap-3 rounded-2xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all text-sm font-bold shadow-sm">
+                    <span class="light-mode-icon text-amber-500 flex items-center gap-2">
+                        <i data-lucide="sun" class="w-4 h-4"></i> Light
+                    </span>
+                    <span class="dark-mode-icon text-blue-400 flex items-center gap-2">
+                        <i data-lucide="moon" class="w-4 h-4"></i> Dark
+                    </span>
+                </button>
+            </div>
         </aside>
 
-        <main class="main-content">
-            <div class="container">
+        <!-- Main Content -->
+        <main class="flex-1 lg:ml-64 pt-24 lg:pt-8 px-4 md:px-8 pb-12 transition-all duration-300">
+            <div class="max-w-[1600px] mx-auto">
                 <%- body %>
             </div>
             
-            <footer class="footer">
-                <p>&copy; <%= new Date().getFullYear() %> Trading Journal & Prop Tracker</p>
+            <footer class="mt-12 py-8 text-center text-slate-400 dark:text-slate-600 text-sm border-t border-slate-100 dark:border-slate-800">
+                <p>&copy; <%= new Date().getFullYear() %> TradeTracker Premium. All rights reserved.</p>
             </footer>
         </main>
     </div>
@@ -35,24 +186,79 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Success alerts for CRUD (using URL query params for simplicity)
+            // Initialize Lucide Icons
+            lucide.createIcons();
+
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.has('success')) {
                 Swal.fire({
                     icon: 'success',
-                    title: 'Berhasil!',
+                    title: 'Success!',
                     text: urlParams.get('success'),
                     timer: 2000,
-                    showConfirmButton: false
+                    showConfirmButton: false,
+                    background: document.documentElement.classList.contains('dark') ? '#1e293b' : '#fff',
+                    color: document.documentElement.classList.contains('dark') ? '#f8fafc' : '#1e293b'
                 });
             }
 
-            // Active link highlighting
+            const themeBtn = document.getElementById('theme-toggle-btn');
+            const html = document.documentElement;
+
+            themeBtn.addEventListener('click', () => {
+                if (html.classList.contains('dark')) {
+                    html.classList.remove('dark');
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    html.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                }
+            });
+
             const currentPath = window.location.pathname;
             document.querySelectorAll('.nav-item').forEach(link => {
                 if (link.getAttribute('href') === currentPath) {
                     link.classList.add('active');
+                    // Update text color of the span inside
+                    const label = link.querySelector('span');
+                    if (label) {
+                        label.classList.remove('text-slate-600', 'dark:text-slate-400');
+                        label.classList.add('text-blue-600', 'dark:text-blue-400');
+                    }
                 }
+            });
+
+            // Mobile Sidebar Logic
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const closeSidebarBtn = document.getElementById('close-sidebar-btn');
+
+            function toggleSidebar(open) {
+                if (open) {
+                    sidebar.classList.remove('-translate-x-full');
+                    sidebar.classList.add('translate-x-0');
+                    overlay.classList.remove('hidden');
+                    setTimeout(() => overlay.classList.add('opacity-100'), 10);
+                    document.body.style.overflow = 'hidden'; // Prevent scrolling when menu is open
+                } else {
+                    sidebar.classList.add('-translate-x-full');
+                    sidebar.classList.remove('translate-x-0');
+                    overlay.classList.remove('opacity-100');
+                    setTimeout(() => overlay.classList.add('hidden'), 300);
+                    document.body.style.overflow = '';
+                }
+            }
+
+            mobileMenuBtn?.addEventListener('click', () => toggleSidebar(true));
+            closeSidebarBtn?.addEventListener('click', () => toggleSidebar(false));
+            overlay?.addEventListener('click', () => toggleSidebar(false));
+
+            // Close sidebar when clicking links (mobile)
+            document.querySelectorAll('.nav-item').forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth < 1024) toggleSidebar(false);
+                });
             });
 
             // Global delete confirmation
@@ -60,18 +266,17 @@
                 form.addEventListener('submit', (e) => {
                     e.preventDefault();
                     Swal.fire({
-                        title: 'Apakah kamu yakin?',
-                        text: "Data yang dihapus tidak bisa dikembalikan!",
+                        title: 'Are you sure?',
+                        text: "This action cannot be undone!",
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#2563eb',
                         cancelButtonColor: '#ef4444',
-                        confirmButtonText: 'Ya, hapus!',
-                        cancelButtonText: 'Batal'
+                        confirmButtonText: 'Yes, delete it!',
+                        background: html.classList.contains('dark') ? '#1e293b' : '#fff',
+                        color: html.classList.contains('dark') ? '#f8fafc' : '#1e293b'
                     }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit();
-                        }
+                        if (result.isConfirmed) form.submit();
                     });
                 });
             });

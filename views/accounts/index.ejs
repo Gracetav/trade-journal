@@ -1,43 +1,66 @@
-<div class="card">
-    <div class="card-header">
-        <h2 class="card-title">Prop Firm Accounts</h2>
-        <a href="/accounts/add" class="btn btn-primary">Add New Account</a>
+<div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
+    <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
+        <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100">Prop Firm Accounts</h2>
+        <a href="/accounts/add" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-xl transition-all shadow-lg shadow-blue-500/20 text-sm">
+            + Add New Account
+        </a>
     </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Account Name</th>
-                <th>Prop Firm</th>
-                <th>Type</th>
-                <th>Balance</th>
-                <th>Status</th>
-                <th>Total Payout</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% accounts.forEach(acc => { %>
-            <tr>
-                <td><strong><%= acc.account_name %></strong></td>
-                <td><%= acc.propfirm_name %></td>
-                <td><span class="badge" style="background: #e2e8f0; color: #475569;"><%= acc.account_type %></span></td>
-                <td>$<%= Number(acc.balance).toLocaleString() %></td>
-                <td><span class="badge badge-<%= acc.status %>"><%= acc.status %></span></td>
-                <td>$<%= Number(acc.total_payout).toLocaleString() %></td>
-                <td>
-                    <div style="display: flex; gap: 5px;">
-                        <a href="/accounts/<%= acc.id %>/edit" class="btn btn-sm btn-primary">Edit</a>
-                        <form action="/accounts/<%= acc.id %>?_method=DELETE" method="POST" class="delete-form">
-                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                        </form>
-                    </div>
-                </td>
-            </tr>
-            <% }) %>
-            <% if (accounts.length === 0) { %>
-            <tr><td colspan="6" style="text-align: center;">No accounts found</td></tr>
-            <% } %>
-        </tbody>
-    </table>
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-700">
+                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Trading Info</th>
+                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">Type</th>
+                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">Size / Balance</th>
+                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">Status</th>
+                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">Total Payout</th>
+                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
+                <% accounts.forEach(acc => { %>
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                    <td class="px-6 py-4">
+                        <div class="font-bold text-slate-800 dark:text-slate-100"><%= acc.propfirm_name %></div>
+                        <div class="flex flex-col text-[10px] text-slate-400 font-bold uppercase tracking-tight mt-0.5">
+                            <span>ID: #<%= acc.account_login_id || 'N/A' %></span>
+                            <span class="text-slate-500 dark:text-slate-500 font-medium normal-case">Name: <%= acc.account_name %></span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase"><%= acc.account_type %></span>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="font-bold text-slate-700 dark:text-slate-200 tracking-tight">$<%= Number(acc.account_size).toLocaleString() %></div>
+                        <div class="text-[10px] text-slate-400 font-medium uppercase italic">Cur: $<%= Number(acc.balance).toLocaleString() %></div>
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <span class="px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider <%= acc.status === 'active' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400' %>">
+                            <%= acc.status %>
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-right font-bold text-emerald-500">$<%= Number(acc.total_payout).toLocaleString() %></td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex justify-end gap-2 text-[18px]">
+                            <a href="/accounts/<%= acc.id %>/edit" class="p-2 text-slate-400 hover:text-blue-600 bg-slate-100 dark:bg-slate-700 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-all" title="Edit">
+                                ✏️
+                            </a>
+                            <form action="/accounts/<%= acc.id %>?_method=DELETE" method="POST" class="delete-form">
+                                <button type="submit" class="p-2 text-slate-400 hover:text-rose-600 bg-slate-100 dark:bg-slate-700 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg transition-all" title="Delete">
+                                    🗑️
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                <% }) %>
+                <% if (accounts.length === 0) { %>
+                <tr>
+                    <td colspan="6" class="px-6 py-12 text-center text-slate-400 italic">No account records found.</td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
 </div>
