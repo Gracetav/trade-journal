@@ -208,12 +208,19 @@
 
         // Data for Donut Chart
         const donutCtx = document.getElementById('roiDonutChart').getContext('2d');
+        const investVal = <%= stats.totalInvestment %>;
+        const profitVal = <%= Math.max(0, stats.netProfit) %>;
+        const totalVal = investVal + profitVal;
+        
+        const investPercent = totalVal > 0 ? ((investVal / totalVal) * 100).toFixed(1) : 0;
+        const profitPercent = totalVal > 0 ? ((profitVal / totalVal) * 100).toFixed(1) : 0;
+
         new Chart(donutCtx, {
             type: 'doughnut',
             data: {
-                labels: ['Investment', 'Profit'],
+                labels: [`Investment (${investPercent}%)`, `Profit (${profitPercent}%)`],
                 datasets: [{
-                    data: [<%= stats.totalInvestment %>, <%= Math.max(0, stats.netProfit) %>],
+                    data: [investVal, profitVal],
                     backgroundColor: ['#ef4444', '#10b981'],
                     borderWidth: 0
                 }]
@@ -222,50 +229,25 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const val = context.raw;
+                                const pct = ((val / totalVal) * 100).toFixed(1);
+                                return ` $${Number(val).toLocaleString()} (${pct}%)`;
+                            }
+                        }
+                    },
                     legend: {
                         position: 'bottom',
                         labels: { 
                             color: secondaryColor,
                             usePointStyle: true,
-                            font: { family: 'Poppins', size: 10, weight: '500' }
+                            font: { family: 'Poppins', size: 10, weight: '600' }
                         }
                     }
                 },
                 cutout: '75%'
-            }
-        });
-
-        // Data for Bar Chart
-        const barCtx = document.getElementById('roiBarChart').getContext('2d');
-        const accountNames = [<% accounts.forEach(acc => { %>'<%= acc.propfirm_name %> #<%= acc.account_login_id %>',<% }) %>];
-        const accountROIs = [<% accounts.forEach(acc => { %><%= acc.roi || 0 %>,<% }) %>];
-
-        new Chart(barCtx, {
-            type: 'bar',
-            data: {
-                labels: accountNames,
-                datasets: [{
-                    label: 'ROI (%)',
-                    data: accountROIs,
-                    backgroundColor: accountROIs.map(roi => roi >= 0 ? '#10b981' : '#ef4444'),
-                    borderRadius: 8
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: { 
-                        beginAtZero: true,
-                        ticks: { color: secondaryColor, callback: v => v + '%' },
-                        grid: { color: gridColor }
-                    },
-                    x: {
-                        ticks: { color: secondaryColor, font: { size: 9 } },
-                        grid: { display: false }
-                    }
-                }
             }
         });
 

@@ -7,6 +7,7 @@ router.get('/add', accountController.addAccountForm);
 router.post('/', accountController.createAccount);
 router.get('/:id/edit', accountController.editAccountForm);
 router.put('/:id', accountController.updateAccount);
+router.patch('/:id/status', accountController.updateStatus);
 router.delete('/:id', accountController.deleteAccount);
 
 module.exports = router;

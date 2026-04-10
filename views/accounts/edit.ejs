@@ -87,6 +87,8 @@
                     <select name="status"
                             class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all appearance-none cursor-pointer">
                         <option value="active" <%= account.status === 'active' ? 'selected' : '' %>>Active</option>
+                        <option value="passed" <%= account.status === 'passed' ? 'selected' : '' %>>Passed</option>
+                        <option value="funded" <%= account.status === 'funded' ? 'selected' : '' %>>Funded</option>
                         <option value="breached" <%= account.status === 'breached' ? 'selected' : '' %>>Breached</option>
                     </select>
                 </div>

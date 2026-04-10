@@ -82,3 +82,14 @@ exports.deleteAccount = async (req, res) => {
         res.status(500).send('Server Error');
     }
 };
+
+exports.updateStatus = async (req, res) => {
+    const { status } = req.body;
+    try {
+        await db.query('UPDATE prop_accounts SET status = ? WHERE id = ?', [status, req.params.id]);
+        res.redirect('/accounts?success=Status updated successfully');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+};
