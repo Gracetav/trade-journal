@@ -23,6 +23,10 @@ app.set('layout', 'layout');
 
 // Helpers for EJS
 app.locals.moment = require('moment');
+app.use((req, res, next) => {
+    res.locals.path = req.path;
+    next();
+});
 
 // Routes
 const dashboardRoutes = require('./routes/dashboard');

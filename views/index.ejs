@@ -1,5 +1,29 @@
 <!-- Global Business Stats -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <!-- Portfolio first (Progress) -->
+    <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 transition-all hover:shadow-md relative overflow-hidden group">
+        <div class="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+            <i data-lucide="layers" class="w-12 h-12"></i>
+        </div>
+        <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-1">Portfolio Progress</p>
+        <div class="flex items-end gap-2 mb-3">
+            <h3 class="text-3xl font-black text-slate-800 dark:text-slate-100 tracking-tight"><%= stats.totalAccounts %></h3>
+            <span class="text-xs font-bold text-slate-400 mb-1.5 uppercase">TOTAL</span>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-y-2 pt-3 border-t border-slate-50 dark:border-slate-700/50">
+            <div class="flex flex-col">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Funded</span>
+                <span class="text-sm font-black text-emerald-500"><%= stats.fundedAccounts %></span>
+            </div>
+            <div class="flex flex-col">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Evaluation</span>
+                <span class="text-sm font-black text-blue-500"><%= stats.evalAccounts %></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Net Profit -->
     <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 transition-all hover:shadow-md relative overflow-hidden group">
         <div class="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
             <i data-lucide="banknote" class="w-12 h-12"></i>
@@ -13,47 +37,19 @@
         </p>
     </div>
 
+    <!-- Winrate -->
     <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 transition-all hover:shadow-md relative overflow-hidden group">
         <div class="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
             <i data-lucide="target" class="w-12 h-12"></i>
         </div>
-        <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-1">Winrate & Performance</p>
+        <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-1">Performance Index</p>
         <h3 class="text-3xl font-black text-blue-600 dark:text-blue-400 tracking-tight"><%= stats.winrate %>%</h3>
         <p class="text-xs font-medium text-slate-400 mt-2 flex items-center gap-1">
-            Total PnL: <span class="<%= stats.totalPnL >= 0 ? 'text-emerald-500' : 'text-rose-500' %> font-bold">$<%= Number(stats.totalPnL).toLocaleString() %></span>
+            PnL: <span class="<%= stats.totalPnL >= 0 ? 'text-emerald-500' : 'text-rose-500' %> font-bold">$<%= Number(stats.totalPnL).toLocaleString() %></span>
         </p>
     </div>
 
-    <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 transition-all hover:shadow-md relative overflow-hidden group">
-        <div class="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
-            <i data-lucide="layers" class="w-12 h-12"></i>
-        </div>
-        <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-1">Portfolio Composition</p>
-        <div class="flex items-end gap-2 mb-3">
-            <h3 class="text-3xl font-black text-slate-800 dark:text-slate-100 tracking-tight"><%= stats.totalAccounts %></h3>
-            <span class="text-xs font-bold text-slate-400 mb-1.5 uppercase">Total Accounts</span>
-        </div>
-        
-        <div class="grid grid-cols-2 gap-y-2 pt-3 border-t border-slate-50 dark:border-slate-700/50">
-            <div class="flex flex-col">
-                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Funded</span>
-                <span class="text-sm font-black text-emerald-500"><%= stats.fundedAccounts %></span>
-            </div>
-            <div class="flex flex-col">
-                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Evaluation</span>
-                <span class="text-sm font-black text-blue-500"><%= stats.evalAccounts %></span>
-            </div>
-            <div class="flex flex-col">
-                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Breached</span>
-                <span class="text-sm font-black text-rose-500"><%= stats.breachedAccounts %></span>
-            </div>
-            <div class="flex flex-col">
-                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Active</span>
-                <span class="text-sm font-black text-slate-800 dark:text-slate-100"><%= stats.activeAccounts %></span>
-            </div>
-        </div>
-    </div>
-
+    <!-- Payouts -->
     <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 transition-all hover:shadow-md relative overflow-hidden group">
         <div class="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
             <i data-lucide="award" class="w-12 h-12"></i>
@@ -61,7 +57,7 @@
         <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-1">Total Payouts</p>
         <div class="flex items-end gap-2 mb-3">
             <h3 class="text-3xl font-black text-emerald-500 tracking-tight">$<%= Number(stats.totalPayout).toLocaleString() %></h3>
-            <span class="text-xs font-bold text-slate-400 mb-1.5 uppercase">All Time</span>
+            <span class="text-xs font-bold text-slate-400 mb-1.5 uppercase">BANKED</span>
         </div>
 
         <div class="grid grid-cols-2 gap-y-2 pt-3 border-t border-slate-50 dark:border-slate-700/50">
@@ -72,14 +68,6 @@
             <div class="flex flex-col text-left">
                 <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Avg Payout</span>
                 <span class="text-sm font-black text-emerald-600">$<%= Number(stats.avgPayout).toLocaleString() %></span>
-            </div>
-            <div class="flex flex-col text-left">
-                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">ATH Payout</span>
-                <span class="text-sm font-black text-blue-500">$<%= Number(stats.maxPayout).toLocaleString() %></span>
-            </div>
-            <div class="flex flex-col text-left">
-                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Efficiency</span>
-                <span class="text-sm font-black text-slate-800 dark:text-slate-100">High</span>
             </div>
         </div>
     </div>
