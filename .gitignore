@@ -1,4 +1,4 @@
 node_modules
-# .env removed from ignore as requested (Warning: security risk!)
+.env
 uploads
 *.log

@@ -4,7 +4,11 @@ const path = require('path');
 
 // Multer Storage
 const storage = multer.diskStorage({
-    destination: './public/uploads/',
+    destination: (req, file, cb) => {
+        // Use /tmp for Vercel, ./public/uploads/ for local
+        const dest = process.env.VERCEL ? '/tmp' : './public/uploads/';
+        cb(null, dest);
+    },
     filename: (req, file, cb) => {
         cb(null, 'payout-' + Date.now() + path.extname(file.originalname));
     }
