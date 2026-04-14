@@ -95,14 +95,14 @@ exports.getDashboard = async (req, res) => {
             LIMIT 12
         `);
 
-        // Prepare Chart Data (Chronological)
+        // Prepare Chart Data (Chronological Balance Growth)
         const chartData = (monthlyROI || []).slice().reverse().map((m, index, arr) => {
             const cumulativePayout = arr.slice(0, index + 1).reduce((sum, item) => sum + Number(item.total_payout), 0);
             const cumulativeSpending = arr.slice(0, index + 1).reduce((sum, item) => sum + Number(item.total_spending), 0);
+            const netBalance = cumulativePayout - cumulativeSpending;
             return {
                 month: m.month_label,
-                payout: cumulativePayout,
-                spending: cumulativeSpending
+                balance: netBalance
             };
         });
 
