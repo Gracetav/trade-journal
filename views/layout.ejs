@@ -1,303 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script>
-        // High-priority script to prevent FOUC (Flash of Unstyled Content)
-        (function() {
-            const theme = localStorage.getItem('theme') || 'light';
-            if (theme === 'dark') {
-                document.documentElement.classList.add('dark');
-            }
-        })();
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TradeTracker | Premium Journal</title>
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Poppins', 'sans-serif'] },
-                    colors: {
-                        primary: '#2563eb',
-                        surface: {
-                            light: '#ffffff',
-                            dark: '#1e293b'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        * { box-sizing: border-box; }
-        html, body { 
-            overflow-x: hidden; 
-            width: 100%;
-            position: relative;
-        }
-        [data-theme="dark"] { color-scheme: dark; }
-        .nav-item.active { 
-            background-color: #f0f7ff;
-            color: #2563eb !important;
-        }
-        .dark .nav-item.active {
-            background-color: rgba(37, 99, 235, 0.15);
-            color: #60a5fa !important;
-        }
-        .nav-item.active .icon-box {
-            background-color: #2563eb !important;
-            border-color: #2563eb !important;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
-        }
-        .nav-item.active .icon-box i, 
-        .nav-item.active .icon-box svg {
-            color: #ffffff !important;
-            stroke: #ffffff !important;
-        }
-        .dark .nav-item.active .icon-box {
-            background-color: #3b82f6 !important;
-            border-color: #3b82f6 !important;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-        }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        .dark ::-webkit-scrollbar-thumb { background: #334155; }
-    </style>
-    <!-- Lucide Icons CDN -->
+    <title>Trade Journal Pro | Premium Trading Analytics</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- Lucide Icons for lightweight icon solution -->
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 transition-colors duration-300 antialiased">
-    <!-- Mobile Header -->
-    <header class="lg:hidden fixed top-0 left-0 w-full h-16 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 z-40 flex items-center justify-between px-4">
-        <button id="mobile-menu-btn" class="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-colors">
-            <i data-lucide="menu" class="w-6 h-6"></i>
-        </button>
-        <div class="flex items-center gap-2">
-            <span class="text-sm font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent tracking-tight uppercase">TradeTracker</span>
-            <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/30">
-                <i data-lucide="line-chart" class="w-4 h-4 text-white"></i>
-            </div>
-        </div>
-    </header>
-
-    <!-- Sidebar Backdrop (Mobile) -->
-    <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 hidden lg:hidden transition-opacity duration-300 opacity-0"></div>
-
-    <div class="flex min-h-screen">
+<body>
+    <div class="app-container">
         <!-- Sidebar -->
-        <aside id="sidebar" class="w-[250px] bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 fixed h-full z-50 transition-all duration-300 -translate-x-full lg:translate-x-0 overflow-y-auto">
-            <div class="p-6 hidden lg:flex items-center gap-3">
-                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/30">
-                    <i data-lucide="line-chart" class="w-5 h-5 text-white"></i>
-                </div>
-                <span class="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent tracking-tight">TradeTracker</span>
-            </div>
-
-            <!-- Header for mobile sidebar -->
-            <div class="lg:hidden p-6 border-b border-slate-50 dark:border-slate-700/50 flex items-center justify-between mb-2">
-                <div class="flex items-center gap-2">
-                    <div class="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
-                        <i data-lucide="line-chart" class="w-4 h-4 text-white"></i>
-                    </div>
-                    <span class="font-bold text-slate-800 dark:text-slate-100">Menu</span>
-                </div>
-                <button id="close-sidebar-btn" class="p-2 text-slate-400 hover:text-rose-500 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-            </div>
+        <aside class="sidebar">
+            <a href="/" class="logo">
+                <i data-lucide="line-chart"></i>
+                <span>TradeJournal <span style="font-weight: 400; opacity: 0.7">Pro</span></span>
+            </a>
             
-            <nav class="px-4 mt-2 lg:mt-4 flex flex-col gap-2">
-                <div class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] px-4 mb-2">Main Menu</div>
-                
-                <a href="/" class="nav-item group flex items-center gap-4 px-4 py-2.5 rounded-2xl transition-all duration-300 <%= path === '/' ? 'active' : '' %>">
-                    <div class="icon-box w-10 h-10 rounded-xl flex items-center justify-center bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20 transition-all shadow-sm">
-                        <i data-lucide="layout-dashboard" class="w-5 h-5 text-slate-500 group-hover:text-blue-600"></i>
-                    </div>
-                    <span class="text-sm font-bold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-100 transition-colors">Dashboard</span>
-                </a>
-
-                <a href="/trades" class="nav-item group flex items-center gap-4 px-4 py-2.5 rounded-2xl transition-all duration-300 <%= path.startsWith('/trades') ? 'active' : '' %>">
-                    <div class="icon-box w-10 h-10 rounded-xl flex items-center justify-center bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20 transition-all shadow-sm">
-                        <i data-lucide="book-open" class="w-5 h-5 text-slate-500 group-hover:text-blue-600"></i>
-                    </div>
-                    <span class="text-sm font-bold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-100 transition-colors">Journal Trade</span>
-                </a>
-
-                <div class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] px-4 mt-4 mb-2">Prop Firm Manager</div>
-
-                <a href="/propfirms" class="nav-item group flex items-center gap-4 px-4 py-2.5 rounded-2xl transition-all duration-300 <%= path.startsWith('/propfirms') ? 'active' : '' %>">
-                    <div class="icon-box w-10 h-10 rounded-xl flex items-center justify-center bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20 transition-all shadow-sm">
-                        <i data-lucide="building-2" class="w-5 h-5 text-slate-500 group-hover:text-blue-600"></i>
-                    </div>
-                    <span class="text-sm font-bold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-100 transition-colors">Prop Firms</span>
-                </a>
-
-                <a href="/purchases" class="nav-item group flex items-center gap-4 px-4 py-2.5 rounded-2xl transition-all duration-300 <%= path.startsWith('/purchases') ? 'active' : '' %>">
-                    <div class="icon-box w-10 h-10 rounded-xl flex items-center justify-center bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20 transition-all shadow-sm">
-                        <i data-lucide="shopping-cart" class="w-5 h-5 text-slate-500 group-hover:text-blue-600"></i>
-                    </div>
-                    <span class="text-sm font-bold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-100 transition-colors">Purchases</span>
-                </a>
-
-                <a href="/accounts" class="nav-item group flex items-center gap-4 px-4 py-2.5 rounded-2xl transition-all duration-300 <%= path.startsWith('/accounts') ? 'active' : '' %>">
-                    <div class="icon-box w-10 h-10 rounded-xl flex items-center justify-center bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20 transition-all shadow-sm">
-                        <i data-lucide="database" class="w-5 h-5 text-slate-500 group-hover:text-blue-600"></i>
-                    </div>
-                    <span class="text-sm font-bold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-100 transition-colors">Accounts</span>
-                </a>
-
-                <a href="/payouts" class="nav-item group flex items-center gap-4 px-4 py-2.5 rounded-2xl transition-all duration-300 <%= path.startsWith('/payouts') ? 'active' : '' %>">
-                    <div class="icon-box w-10 h-10 rounded-xl flex items-center justify-center bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20 transition-all shadow-sm">
-                        <i data-lucide="wallet" class="w-5 h-5 text-slate-500 group-hover:text-blue-600"></i>
-                    </div>
-                    <span class="text-sm font-bold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-100 transition-colors">Payouts</span>
-                </a>
-
-                <div class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] px-4 mt-4 mb-2">Analytics</div>
-
-                <a href="/roi" class="nav-item group flex items-center gap-4 px-4 py-2.5 rounded-2xl transition-all duration-300 <%= path.startsWith('/roi') ? 'active' : '' %>">
-                    <div class="icon-box w-10 h-10 rounded-xl flex items-center justify-center bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20 transition-all shadow-sm">
-                        <i data-lucide="trending-up" class="w-5 h-5 text-slate-500 group-hover:text-blue-600"></i>
-                    </div>
-                    <span class="text-sm font-bold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-100 transition-colors">ROI Analytics</span>
-                </a>
+            <nav>
+                <ul class="nav-links">
+                    <li class="nav-item">
+                        <a href="/" class="<%= path === '/' ? 'active' : '' %>">
+                            <i data-lucide="layout-dashboard"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/trades" class="<%= path.startsWith('/trades') ? 'active' : '' %>">
+                            <i data-lucide="history"></i>
+                            <span>Trades</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/accounts" class="<%= path.startsWith('/accounts') ? 'active' : '' %>">
+                            <i data-lucide="briefcase"></i>
+                            <span>Accounts</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/payouts" class="<%= path.startsWith('/payouts') ? 'active' : '' %>">
+                            <i data-lucide="wallet"></i>
+                            <span>Payouts</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" style="margin-top: auto;">
+                        <a href="/logout">
+                            <i data-lucide="log-out"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
             </nav>
-
-            <div class="px-6 py-6 mt-auto border-t border-slate-50 dark:border-slate-700/50">
-                <div class="flex items-center gap-3 mb-6 px-2">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-black shadow-lg shadow-blue-500/20">
-                        <%= username ? username[0].toUpperCase() : 'U' %>
-                    </div>
-                    <div class="overflow-hidden">
-                        <p class="text-xs font-black text-slate-800 dark:text-slate-100 truncate"><%= username || 'User' %></p>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Journalist</p>
-                    </div>
-                </div>
-
-                <div class="flex flex-col gap-2">
-                    <button id="theme-toggle" class="w-full flex items-center justify-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all font-bold text-xs relative overflow-hidden">
-                        <span class="dark:hidden flex items-center gap-2 text-amber-500">
-                            <i data-lucide="sun" class="w-4 h-4"></i> Light Mode
-                        </span>
-                        <span class="hidden dark:flex items-center gap-2 text-blue-400">
-                            <i data-lucide="moon" class="w-4 h-4"></i> Dark Mode
-                        </span>
-                    </button>
-                    
-                    <a href="/logout" class="w-full flex items-center justify-center gap-3 p-3 rounded-2xl bg-rose-50 dark:bg-rose-900/10 text-rose-600 dark:text-rose-400 border border-rose-100 dark:border-rose-800/30 hover:bg-rose-100 dark:hover:bg-rose-900/20 transition-all font-bold text-xs uppercase tracking-widest">
-                        <i data-lucide="log-out" class="w-4 h-4"></i> Sign Out
-                    </a>
-                </div>
-            </div>
         </aside>
 
         <!-- Main Content -->
-        <main class="flex-1 lg:ml-[250px] pt-24 lg:pt-8 px-4 md:px-8 pb-12 transition-all duration-300">
-            <div class="max-w-[1600px] mx-auto">
+        <main class="main-content">
+            <header class="topbar">
+                <div class="user-badge">
+                    <span class="role-tag">Trader Prop</span>
+                    <span><%= username || 'Guest' %></span>
+                    <i data-lucide="user-circle"></i>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
                 <%- body %>
             </div>
-            
-            <footer class="mt-12 py-8 text-center text-slate-400 dark:text-slate-600 text-sm border-t border-slate-100 dark:border-slate-800">
-                <p>&copy; <%= new Date().getFullYear() %> TradeTracker Premium. All rights reserved.</p>
-            </footer>
         </main>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Initialize Lucide Icons
-            lucide.createIcons();
-
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.has('success')) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: urlParams.get('success'),
-                    timer: 2000,
-                    showConfirmButton: false,
-                    background: document.documentElement.classList.contains('dark') ? '#1e293b' : '#fff',
-                    color: document.documentElement.classList.contains('dark') ? '#f8fafc' : '#1e293b'
-                });
-            }
-
-            const themeBtn = document.getElementById('theme-toggle');
-            const html = document.documentElement;
-
-            themeBtn.addEventListener('click', () => {
-                const isDark = html.classList.toggle('dark');
-                localStorage.setItem('theme', isDark ? 'dark' : 'light');
-            });
-
-
-            // Handle active menu labels
-            document.querySelectorAll('.nav-item.active span').forEach(span => {
-                span.classList.remove('text-slate-600', 'dark:text-slate-400');
-            });
-            document.querySelectorAll('.nav-item.active .icon-box i').forEach(i => {
-                i.classList.remove('text-slate-500');
-            });
-
-            // Mobile Sidebar Logic
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebar-overlay');
-            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-            const closeSidebarBtn = document.getElementById('close-sidebar-btn');
-
-            function toggleSidebar(open) {
-                if (open) {
-                    sidebar.classList.remove('-translate-x-full');
-                    sidebar.classList.add('translate-x-0');
-                    overlay.classList.remove('hidden');
-                    setTimeout(() => overlay.classList.add('opacity-100'), 10);
-                    document.body.style.overflow = 'hidden'; // Prevent scrolling when menu is open
-                } else {
-                    sidebar.classList.add('-translate-x-full');
-                    sidebar.classList.remove('translate-x-0');
-                    overlay.classList.remove('opacity-100');
-                    setTimeout(() => overlay.classList.add('hidden'), 300);
-                    document.body.style.overflow = '';
-                }
-            }
-
-            mobileMenuBtn?.addEventListener('click', () => toggleSidebar(true));
-            closeSidebarBtn?.addEventListener('click', () => toggleSidebar(false));
-            overlay?.addEventListener('click', () => toggleSidebar(false));
-
-            // Close sidebar when clicking links (mobile)
-            document.querySelectorAll('.nav-item').forEach(link => {
-                link.addEventListener('click', () => {
-                    if (window.innerWidth < 1024) toggleSidebar(false);
-                });
-            });
-
-            // Global delete confirmation
-            document.querySelectorAll('.delete-form').forEach(form => {
-                form.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    Swal.fire({
-                        title: 'Are you sure?',
-                        text: "This action cannot be undone!",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#2563eb',
-                        cancelButtonColor: '#ef4444',
-                        confirmButtonText: 'Yes, delete it!',
-                        background: html.classList.contains('dark') ? '#1e293b' : '#fff',
-                        color: html.classList.contains('dark') ? '#f8fafc' : '#1e293b'
-                    }).then((result) => {
-                        if (result.isConfirmed) form.submit();
-                    });
-                });
-            });
-        });
+        // Initialize Lucide icons
+        lucide.createIcons();
     </script>
 </body>
 </html>

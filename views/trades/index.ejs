@@ -1,160 +1,85 @@
-<div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
-    <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-700 flex flex-wrap justify-between items-center gap-4 bg-slate-50/50 dark:bg-slate-800/50">
-        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-            <span>📔 Trading Journal</span>
-        </h2>
-        <a href="/trades/add" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-xl transition-all shadow-lg shadow-blue-500/20 text-sm">
-            + New Trade
+<div class="page-header">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h1 class="page-title">Trading Journal</h1>
+            <p class="page-subtitle">Track every move and master your setups.</p>
+        </div>
+        <a href="/trades/add" class="btn btn-primary">
+            <i data-lucide="plus" style="width: 16px;"></i>
+            New Entry
         </a>
     </div>
+</div>
 
-    <!-- Filtering Bar -->
-    <div class="px-6 py-4 bg-slate-50 dark:bg-slate-900 border-b border-slate-100 dark:border-slate-700">
-        <form action="/trades" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div class="relative">
-                <input type="text" name="pair" placeholder="Pair (e.g. BTCUSD)" 
-                       class="w-full px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-medium"
-                       value="<%= filters.pair || '' %>">
-            </div>
-            <div>
-                <select name="result" class="w-full px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all cursor-pointer font-medium appearance-none">
-                    <option value="">All Results</option>
-                    <option value="win" <%= filters.result === 'win' ? 'selected' : '' %>>Win</option>
-                    <option value="loss" <%= filters.result === 'loss' ? 'selected' : '' %>>Loss</option>
-                    <option value="BE" <%= filters.result === 'BE' ? 'selected' : '' %>>BE</option>
-                </select>
-            </div>
-            <div>
-                <input type="date" name="date" 
-                       class="w-full px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all cursor-pointer font-medium"
-                       value="<%= filters.date || '' %>">
-            </div>
-            <button type="submit" class="bg-slate-800 dark:bg-slate-700 hover:bg-slate-900 dark:hover:bg-slate-600 text-white font-bold py-2 rounded-xl transition-all shadow-sm text-sm">
-                Apply Filters
-            </button>
-        </form>
-    </div>
-
-    <!-- Desktop Table View -->
-    <div class="hidden md:block overflow-x-auto">
-        <table class="w-full text-left border-collapse">
-            <thead>
-                <tr class="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-700">
-                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Trading Info</th>
-                    <th class="hidden xl:table-cell px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Setup</th>
-                    <th class="hidden 2xl:table-cell px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">RR</th>
-                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">Result</th>
-                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">PnL</th>
-                    <th class="hidden xl:table-cell px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">Account</th>
-                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">Actions</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
-                <% trades.forEach(trade => { %>
-                <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
-                    <td class="px-6 py-4">
-                        <div class="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase italic"><%= moment(trade.date).format('MMM DD, YYYY') %></div>
-                        <div class="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-1.5 mt-0.5 tracking-tight truncate max-w-[100px] md:max-w-none">
-                            <%= trade.pair %>
-                            <span class="hidden xs:inline-block text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700/50 text-slate-400 font-bold uppercase"><%= trade.session %></span>
-                        </div>
-                    </td>
-                    <td class="hidden xl:table-cell px-6 py-4">
-                        <span class="text-slate-600 dark:text-slate-300 text-sm font-medium"><%= trade.setup %></span>
-                    </td>
-                    <td class="hidden 2xl:table-cell px-6 py-4 text-center">
-                        <% 
-                            let rr = trade.reward_risk || '1:1';
-                        %>
-                        <span class="text-xs font-bold text-slate-500 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 px-2 py-0.5 rounded-lg"><%= rr %></span>
-                    </td>
-                    <td class="px-6 py-4 text-center">
-                        <span class="px-2 py-1 md:px-2.5 md:py-1 rounded-lg text-[9px] md:text-[10px] font-bold uppercase tracking-wider
-                            <%= trade.result === 'win' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 
-                               (trade.result === 'loss' ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400' : 
-                               'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400') %>">
-                            <%= trade.result %>
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 text-right">
-                        <div class="font-bold tracking-tight text-sm md:text-base <%= trade.pnl >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
-                            <%= trade.pnl >= 0 ? '+' : '-' %>$<%= Math.abs(Number(trade.pnl)).toLocaleString() %>
-                        </div>
-                    </td>
-                    <td class="hidden xl:table-cell px-6 py-4 text-right">
-                        <div class="text-xs text-slate-500 dark:text-slate-400 font-medium truncate max-w-[120px]" title="<%= trade.propfirm_name %>">
-                            🏦 <%= trade.propfirm_name || 'N/A' %>
-                        </div>
-                    </td>
-                    <td class="px-6 py-4 text-right">
-                        <div class="flex justify-end gap-2">
-                            <a href="/trades/<%= trade.id %>/edit" 
-                               class="w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-100 dark:border-slate-600 text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-all shadow-sm">
-                                <i data-lucide="edit-3" class="w-3.5 h-3.5 md:w-4 md:h-4"></i>
-                            </a>
-                            <form action="/trades/<%= trade.id %>?_method=DELETE" method="POST" class="delete-form">
-                                <button type="submit" 
-                                        class="w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-100 dark:border-slate-600 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/30 transition-all shadow-sm">
-                                    <i data-lucide="trash-2" class="w-3.5 h-3.5 md:w-4 md:h-4"></i>
-                                </button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-                <% }) %>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Mobile Card View -->
-    <div class="md:hidden divide-y divide-slate-100 dark:divide-slate-700">
-        <% trades.forEach(trade => { %>
-        <div class="p-5 space-y-3">
-            <div class="flex justify-between items-start">
-                <div>
-                    <div class="text-[10px] text-slate-400 font-black uppercase tracking-widest"><%= moment(trade.date).format('MMMM DD, YYYY') %></div>
-                    <div class="font-black text-slate-800 dark:text-slate-100 text-lg mt-0.5"><%= trade.pair %> <span class="text-xs font-bold text-slate-400 ml-1">#<%= trade.session %></span></div>
-                </div>
-                <span class="px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest shadow-sm
-                    <%= trade.result === 'win' ? 'bg-emerald-500 text-white' : 
-                       (trade.result === 'loss' ? 'bg-rose-500 text-white' : 'bg-amber-500 text-white') %>">
-                    <%= trade.result %>
-                </span>
-            </div>
-
-            <div class="flex items-center gap-3 py-2 px-3 bg-slate-50 dark:bg-slate-900 inline-block rounded-xl border border-slate-100 dark:border-slate-800 w-full justify-between">
-                <div>
-                    <div class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Setup</div>
-                    <div class="text-xs font-bold text-slate-700 dark:text-slate-300"><%= trade.setup %></div>
-                </div>
-                <div class="text-right">
-                    <div class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">PNL</div>
-                    <div class="font-black text-sm <%= trade.pnl >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
-                        <%= trade.pnl >= 0 ? '+' : '-' %>$<%= Math.abs(Number(trade.pnl)).toLocaleString() %>
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex items-center justify-between pt-1">
-                <div class="text-[10px] text-slate-500 font-bold truncate max-w-[150px]">
-                    🏦 <%= trade.propfirm_name || 'N/A' %>
-                </div>
-                <div class="flex gap-2">
-                    <a href="/trades/<%= trade.id %>/edit" class="p-2.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-xl">
-                        <i data-lucide="edit-3" class="w-4 h-4"></i>
-                    </a>
-                    <form action="/trades/<%= trade.id %>?_method=DELETE" method="POST" class="delete-form">
-                        <button type="submit" class="p-2.5 bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 rounded-xl">
-                            <i data-lucide="trash-2" class="w-4 h-4"></i>
-                        </button>
-                    </form>
-                </div>
-            </div>
+<!-- Search & Filter Bar (Minimalist) -->
+<div class="card-table-wrapper" style="margin-bottom: 1.5rem; padding: 1rem 1.5rem;">
+    <form action="/trades" method="GET" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 200px; position: relative;">
+            <i data-lucide="search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; color: var(--text-muted);"></i>
+            <input type="text" name="pair" placeholder="Search pair (e.g. BTCUSD)" 
+                   style="width: 100%; padding: 0.6rem 0.6rem 0.6rem 2.5rem; border-radius: var(--radius); border: 1px solid var(--border); font-family: inherit; font-size: 0.9rem;"
+                   value="<%= filters.pair || '' %>">
         </div>
-        <% }) %>
-    </div>
+        <select name="result" style="padding: 0.6rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--white); font-family: inherit; font-size: 0.9rem; min-width: 120px;">
+            <option value="">All Results</option>
+            <option value="win" <%= filters.result === 'win' ? 'selected' : '' %>>Win</option>
+            <option value="loss" <%= filters.result === 'loss' ? 'selected' : '' %>>Loss</option>
+            <option value="BE" <%= filters.result === 'BE' ? 'selected' : '' %>>Break Even</option>
+        </select>
+        <button type="submit" class="btn btn-ghost">Apply Filters</button>
+    </form>
+</div>
 
+<div class="card-table-wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th>Date / Time</th>
+                <th>Instrument</th>
+                <th>Setup</th>
+                <th style="text-align: center;">Result</th>
+                <th style="text-align: right;">PnL</th>
+                <th style="text-align: right;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% trades.forEach(trade => { %>
+            <tr>
+                <td>
+                    <div style="font-weight: 500;"><%= moment(trade.date).format('MMM DD, YYYY') %></div>
+                    <div style="font-size: 0.7rem; color: var(--text-muted);"><%= trade.session %> Session</div>
+                </td>
+                <td>
+                    <div style="font-weight: 700; color: var(--primary);"><%= trade.pair %></div>
+                    <div style="font-size: 0.7rem; color: var(--text-muted);"><%= trade.propfirm_name %></div>
+                </td>
+                <td>
+                    <span style="font-size: 0.85rem; font-weight: 500;"><%= trade.setup %></span>
+                    <div style="font-size: 0.7rem; color: var(--text-muted);">RR: <%= trade.reward_risk || '1:1' %></div>
+                </td>
+                <td style="text-align: center;">
+                    <span class="badge badge-<%= trade.result === 'win' ? 'success' : (trade.result === 'loss' ? 'danger' : 'warning') %>">
+                        <%= trade.result.toUpperCase() %>
+                    </span>
+                </td>
+                <td style="text-align: right; font-weight: 700; font-size: 1rem;" class="<%= trade.pnl >= 0 ? 'positive' : 'negative' %>">
+                    <%= trade.pnl >= 0 ? '+' : '' %>$<%= Math.abs(trade.pnl).toLocaleString() %>
+                </td>
+                <td style="text-align: right;">
+                    <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
+                        <a href="/trades/<%= trade.id %>/edit" class="btn btn-ghost" style="padding: 0.4rem;"><i data-lucide="edit-3" style="width: 16px;"></i></a>
+                        <form action="/trades/<%= trade.id %>?_method=DELETE" method="POST" onsubmit="return confirm('Delete this trade entry?')">
+                            <button type="submit" class="btn btn-ghost" style="padding: 0.4rem; color: var(--danger);"><i data-lucide="trash-2" style="width: 16px;"></i></button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            <% }) %>
+        </tbody>
+    </table>
     <% if (trades.length === 0) { %>
-        <div class="px-6 py-12 text-center text-slate-400 italic">No trade entries found.</div>
+        <div style="padding: 3rem; text-align: center; color: var(--text-muted);">
+            No trades found. Time to search for an entry! 🏹
+        </div>
     <% } %>
 </div>

@@ -1,363 +1,164 @@
-<!-- Global Business Stats -->
-<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6 mb-8">
-    <!-- Portfolio first (Progress) -->
-    <div class="bg-white dark:bg-slate-800 p-5 md:p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 transition-all hover:shadow-md relative overflow-hidden group">
-        <div class="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
-            <i data-lucide="layers" class="w-12 h-12"></i>
+<div class="page-header">
+    <h1 class="page-title">Welcome back, <%= username %></h1>
+    <p class="page-subtitle">Here's your trading performance overview for this month.</p>
+</div>
+
+<!-- Stats Overview -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-label">Total PnL</div>
+        <div class="stat-value <%= stats.totalPnL >= 0 ? 'positive' : 'negative' %>">
+            <%= stats.totalPnL >= 0 ? '+' : '' %>$<%= stats.totalPnL.toLocaleString() %>
         </div>
-        <p class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Portfolio Progress</p>
-        <div class="flex items-end gap-2 mb-3">
-            <h3 class="text-2xl md:text-3xl font-black text-slate-800 dark:text-slate-100 tracking-tight"><%= stats.totalAccounts %></h3>
-            <span class="text-[10px] font-bold text-slate-400 mb-1 uppercase tracking-tighter">TOTAL</span>
-        </div>
-        
-        <div class="grid grid-cols-2 gap-x-2 pt-3 border-t border-slate-50 dark:border-slate-700/50">
-            <div class="flex flex-col">
-                <span class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Funded</span>
-                <span class="text-sm font-black text-emerald-500"><%= stats.fundedAccounts %></span>
-            </div>
-            <div class="flex flex-col text-right">
-                <span class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Evaluation</span>
-                <span class="text-sm font-black text-blue-500"><%= stats.evalAccounts %></span>
-            </div>
+        <div class="stat-change <%= stats.totalPnL >= 0 ? 'positive' : 'negative' %>">
+            <i data-lucide="<%= stats.totalPnL >= 0 ? 'trending-up' : 'trending-down' %>" style="width: 14px;"></i>
+            <span>Performance Trend</span>
         </div>
     </div>
 
-    <!-- Net Profit -->
-    <div class="bg-white dark:bg-slate-800 p-5 md:p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 transition-all hover:shadow-md relative overflow-hidden group">
-        <div class="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
-            <i data-lucide="banknote" class="w-12 h-12"></i>
+    <div class="stat-card">
+        <div class="stat-label">Win Rate</div>
+        <div class="stat-value"><%= stats.winrate %>%</div>
+        <div class="progress-bar-small" style="height: 4px; background: #e2e8f0; margin-top: 10px; border-radius: 4px;">
+            <div style="width: <%= stats.winrate %>%; height: 100%; background: var(--accent); border-radius: 4px;"></div>
         </div>
-        <p class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Net Operating Profit</p>
-        <h3 class="text-2xl md:text-3xl font-black <%= stats.netProfit >= 0 ? 'text-emerald-500' : 'text-rose-500' %> tracking-tight">
-            $<%= Number(stats.netProfit).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0}) %>
-        </h3>
-        <p class="text-[10px] font-medium text-slate-400 mt-2 flex items-center gap-1">
-            <span class="<%= stats.totalROI >= 0 ? 'text-emerald-500' : 'text-rose-500' %> font-bold"><%= stats.totalROI %>%</span> ROI Overall
-        </p>
     </div>
 
-    <!-- Winrate -->
-    <div class="bg-white dark:bg-slate-800 p-5 md:p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 transition-all hover:shadow-md relative overflow-hidden group">
-        <div class="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
-            <i data-lucide="target" class="w-12 h-12"></i>
+    <div class="stat-card">
+        <div class="stat-label">Total Accounts</div>
+        <div class="stat-value"><%= stats.totalAccounts %></div>
+        <div class="stat-change" style="color: var(--text-muted)">
+            <%= stats.fundedAccounts %> Funded | <%= stats.activeAccounts %> Active
         </div>
-        <p class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Execution Score</p>
-        <h3 class="text-2xl md:text-3xl font-black text-blue-600 dark:text-blue-400 tracking-tight"><%= stats.winrate %>%</h3>
-        <p class="text-[10px] font-medium text-slate-400 mt-2 flex items-center gap-1">
-            PnL: <span class="<%= stats.totalPnL >= 0 ? 'text-emerald-500' : 'text-rose-500' %> font-bold">$<%= Number(stats.totalPnL).toLocaleString() %></span>
-        </p>
     </div>
 
-    <!-- Payouts -->
-    <div class="bg-white dark:bg-slate-800 p-5 md:p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 transition-all hover:shadow-md relative overflow-hidden group">
-        <div class="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
-            <i data-lucide="award" class="w-12 h-12"></i>
+    <div class="stat-card">
+        <div class="stat-label">Total ROI</div>
+        <div class="stat-value <%= stats.totalROI >= 0 ? 'positive' : 'negative' %>">
+            <%= stats.totalROI %>%
         </div>
-        <p class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Total Payouts</p>
-        <div class="flex items-end gap-2 mb-3">
-            <h3 class="text-2xl md:text-3xl font-black text-emerald-500 tracking-tight">$<%= Number(stats.totalPayout).toLocaleString() %></h3>
-            <span class="text-[10px] font-bold text-slate-400 mb-1 uppercase tracking-tighter">BANKED</span>
-        </div>
-
-        <div class="grid grid-cols-2 gap-x-2 pt-3 border-t border-slate-50 dark:border-slate-700/50">
-            <div class="flex flex-col text-left">
-                <span class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">This Month</span>
-                <span class="text-sm font-black text-emerald-500">$<%= Number(stats.currentMonthPayout).toLocaleString() %></span>
-            </div>
-            <div class="flex flex-col text-right">
-                <span class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Avg Payout</span>
-                <span class="text-sm font-black text-emerald-600">$<%= Number(stats.avgPayout).toLocaleString() %></span>
-            </div>
+        <div class="stat-change" style="color: var(--text-muted)">
+            Net Profit: $<%= stats.netProfit.toLocaleString() %>
         </div>
     </div>
 </div>
 
-<!-- Main Intelligence Section -->
-<div class="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-8">
-    <!-- Equity Curve & Cashflow -->
-    <div class="xl:col-span-2 bg-white dark:bg-slate-800 p-6 md:p-8 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
-        <div class="flex justify-between items-center mb-8">
-            <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                <i data-lucide="trending-up" class="w-5 h-5 text-blue-500"></i> Prop Firm ROI Curve
-            </h2>
-            <div class="flex gap-4">
-                <div class="flex items-center gap-1.5">
-                    <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
-                    <span class="text-[10px] font-bold text-slate-400">PAYOUT</span>
-                </div>
-                <div class="flex items-center gap-1.5">
-                    <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
-                    <span class="text-[10px] font-bold text-slate-400">SPENDING</span>
-                </div>
-            </div>
+<div style="display: grid; grid-template-columns: 1.6fr 1.4fr; gap: 1.5rem; margin-bottom: 2rem;">
+    <!-- Chart Section -->
+    <div class="card-table-wrapper" style="padding: 1.5rem;">
+        <div class="card-header" style="border-bottom: none; padding: 0 0 1.5rem 0;">
+            <h3 class="card-title">Balance Growth</h3>
+            <i data-lucide="info" style="color: var(--text-muted); width: 16px;"></i>
         </div>
-        <div class="h-[300px] w-full">
-            <canvas id="equityCurveChart"></canvas>
-        </div>
+        <canvas id="growthChart" height="250"></canvas>
     </div>
 
-    <!-- Prop Firm Behavior (Insights) -->
-    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col h-full overflow-hidden">
-        <div class="p-6 md:p-8 border-b border-slate-50 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/50">
-            <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                <i data-lucide="award" class="w-5 h-5 text-indigo-500"></i> Top Payout Firms
-            </h2>
+    <!-- Active Accounts Table -->
+    <div class="card-table-wrapper">
+        <div class="card-header">
+            <h3 class="card-title">Active Accounts</h3>
+            <a href="/accounts" class="btn btn-ghost" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;">View All</a>
         </div>
-        
-        <div class="p-6 md:p-8 flex-grow">
-            <div class="space-y-5">
-                <% firmStats.slice(0, 4).forEach((firm, index) => { %>
-                <div class="group relative flex items-center gap-4 p-3 -mx-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-all">
-                    <!-- Rank Action Icon -->
-                    <div class="w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm shrink-0 relative
-                        <%= index === 0 ? 'bg-amber-100 text-amber-600 border border-amber-200 shadow-lg shadow-amber-500/10' : 
-                            index === 1 ? 'bg-slate-100 text-slate-500 border border-slate-200 shadow-lg shadow-slate-500/10' : 
-                            index === 2 ? 'bg-orange-100 text-orange-600 border border-orange-200 shadow-lg shadow-orange-500/10' : 
-                            'bg-slate-50 text-slate-400 border border-slate-100 dark:bg-slate-800 dark:border-slate-700' %>">
-                        <% if (index === 0) { %>
-                            <i data-lucide="trophy" class="w-5 h-5 animate-pulse"></i>
-                        <% } else if (index === 1) { %>
-                            <i data-lucide="medal" class="w-5 h-5"></i>
-                        <% } else if (index === 2) { %>
-                            <i data-lucide="award" class="w-5 h-5"></i>
-                        <% } else { %>
-                            <span class="text-[10px]"><%= index + 1 %></span>
-                        <% } %>
-                    </div>
-                    
-                    <div class="flex-grow min-w-0">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h4 class="font-bold text-slate-800 dark:text-slate-100 leading-tight truncate"><%= firm.name %></h4>
-                                <p class="text-[10px] font-bold text-slate-400 mt-0.5"><%= firm.total_accounts %> Accounts</p>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-sm font-black text-emerald-500">$<%= Number(firm.total_payout).toLocaleString() %></p>
-                                <p class="text-[9px] text-slate-400 font-bold uppercase tracking-tighter">Profit Taken</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <% }) %>
-
-                <% if (firmStats.length === 0) { %>
-                    <div class="text-center py-12">
-                        <div class="w-12 h-12 bg-slate-50 dark:bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <i data-lucide="info" class="w-6 h-6 text-slate-300"></i>
-                        </div>
-                        <p class="text-sm text-slate-400">No firm data tracked yet.</p>
-                    </div>
-                <% } %>
-            </div>
-        </div>
-        
-        <div class="p-4 bg-slate-50/50 dark:bg-slate-900/30 border-t border-slate-50 dark:border-slate-700/50">
-            <a href="/accounts" class="flex items-center justify-center gap-2 text-[10px] font-bold text-slate-400 hover:text-indigo-500 transition-colors uppercase tracking-widest">
-                Explore All Firms <i data-lucide="chevron-right" class="w-3 h-3"></i>
-            </a>
-        </div>
-    </div>
-</div>
-
-<!-- Monthly Business ROI Overview -->
-<!-- Monthly Business ROI Overview -->
-<div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 mb-8 overflow-hidden">
-    <div class="px-4 md:px-6 py-4 md:py-5 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
-        <h2 class="text-base md:text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-            <i data-lucide="calendar" class="w-5 h-5 text-blue-500"></i> Monthly ROI
-        </h2>
-        <span class="text-[9px] md:text-xs font-bold text-blue-600 bg-blue-50 dark:bg-blue-900/30 px-2 md:px-3 py-1 rounded-full uppercase tracking-tighter">History</span>
-    </div>
-    <!-- Desktop Monthly ROI Table -->
-    <div class="hidden md:block overflow-x-auto">
-        <table class="w-full text-left">
+        <table>
             <thead>
-                <tr class="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-700">
-                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Month</th>
-                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Net Profit</th>
-                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">Cost</th>
-                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">Payout</th>
-                    <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">ROI</th>
+                <tr>
+                    <th>Firm</th>
+                    <th>Size</th>
+                    <th>Phase</th>
+                    <th>Status</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
-                <% monthlyROI.forEach(item => { %>
-                <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
-                    <td class="px-6 py-4">
-                        <div class="font-bold text-slate-800 dark:text-slate-100 text-sm"><%= item.month_label %></div>
-                    </td>
-                    <td class="px-6 py-4 text-sm font-black <%= item.net_profit >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
-                        $<%= Number(item.net_profit).toLocaleString() %>
-                    </td>
-                    <td class="px-6 py-4 text-slate-500 dark:text-slate-400 font-bold text-right text-xs">$<%= Number(item.total_spending).toLocaleString() %></td>
-                    <td class="px-6 py-4 text-emerald-500 font-black text-right text-xs">$<%= Number(item.total_payout).toLocaleString() %></td>
-                    <td class="px-6 py-4 text-right">
-                        <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-xs font-black <%= item.roi_percent >= 0 ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400' : 'bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400' %>">
-                            <%= item.roi_percent ? Number(item.roi_percent).toFixed(1) : '0.0' %>%
-                        </span>
-                    </td>
+            <tbody>
+                <% recentAccounts.filter(a => a.status === 'active').slice(0, 5).forEach(account => { %>
+                <tr>
+                    <td><strong><%= account.propfirm_name %></strong></td>
+                    <td>$<%= Number(account.account_size).toLocaleString() %></td>
+                    <td><%= account.phase %></td>
+                    <td><span class="badge badge-success"><%= account.status %></span></td>
                 </tr>
                 <% }) %>
             </tbody>
         </table>
     </div>
-
-    <!-- Mobile Monthly ROI Cards -->
-    <div class="md:hidden divide-y divide-slate-100 dark:divide-slate-700">
-        <% monthlyROI.forEach(item => { %>
-        <div class="p-5 space-y-3">
-            <div class="flex justify-between items-center">
-                <div class="font-black text-slate-800 dark:text-slate-100 text-base uppercase tracking-tight"><%= item.month_label %></div>
-                <span class="px-2 py-1 rounded-lg text-[10px] font-black shadow-sm <%= item.roi_percent >= 0 ? 'bg-emerald-500 text-white' : 'bg-rose-500 text-white' %>">
-                    ROI <%= item.roi_percent ? Number(item.roi_percent).toFixed(1) : '0.0' %>%
-                </span>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-                <div class="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-100 dark:border-slate-800">
-                    <p class="text-[8px] font-bold text-slate-400 uppercase mb-1">Net Profit</p>
-                    <p class="font-black text-sm <%= item.net_profit >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">$<%= Number(item.net_profit).toLocaleString() %></p>
-                </div>
-                <div class="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-100 dark:border-slate-800">
-                    <p class="text-[8px] font-bold text-slate-400 uppercase mb-1">Banked Payout</p>
-                    <p class="font-black text-sm text-emerald-500">$<%= Number(item.total_payout).toLocaleString() %></p>
-                </div>
-            </div>
-        </div>
-        <% }) %>
-    </div>
 </div>
 
-<div class="mb-12">
-    <!-- Payout History -->
-    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col">
-        <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/30 dark:bg-slate-800/50">
-            <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                <i data-lucide="receipt" class="w-5 h-5 text-emerald-500"></i> Revenue Stream
-            </h2>
-            <a href="/payouts" class="text-[10px] font-bold text-blue-600 hover:text-blue-700 transition-colors uppercase tracking-widest bg-blue-50 dark:bg-blue-900/30 px-3 py-1 rounded-full">All &rarr;</a>
-        </div>
-        <div class="divide-y divide-slate-100 dark:divide-slate-700 flex-grow">
-            <% recentPayouts.slice(0, 5).forEach(p => { %>
-            <div class="px-5 py-4 flex flex-wrap items-center justify-between gap-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors group">
-                <div class="flex items-center gap-3 overflow-hidden min-w-[150px]">
-                    <div class="w-10 h-10 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl flex items-center justify-center shrink-0">
-                        <i data-lucide="arrow-down-left" class="w-5 h-5 text-emerald-500 group-hover:scale-110 transition-transform"></i>
-                    </div>
-                    <div class="truncate">
-                        <p class="font-bold text-slate-800 dark:text-slate-100 text-sm truncate"><%= p.propfirm_name %></p>
-                        <p class="text-[9px] text-slate-400 uppercase font-black mt-0.5 tracking-tighter truncate">#<%= p.account_login_id || 'N/A' %></p>
-                    </div>
-                </div>
-                <div class="text-right shrink-0">
-                    <p class="text-emerald-500 font-black text-base">$<%= Number(p.amount).toLocaleString() %></p>
-                    <div class="flex items-center justify-end gap-1.5 mt-0.5">
-                        <span class="text-[8px] font-black text-slate-400 uppercase"><%= new Date(p.request_date).toLocaleDateString() %></span>
-                        <span class="w-1.5 h-1.5 rounded-full <%= p.status === 'approved' ? 'bg-emerald-500' : 'bg-amber-500' %>"></span>
-                    </div>
-                </div>
-            </div>
+<!-- Recent Payouts Table -->
+<div class="card-table-wrapper">
+    <div class="card-header">
+        <h3 class="card-title">Recent Payouts</h3>
+        <a href="/payouts" class="btn btn-primary">Request Payout</a>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Firm</th>
+                <th>Account ID</th>
+                <th>Amount</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% recentPayouts.slice(0, 5).forEach(payout => { %>
+            <tr>
+                <td><%= moment(payout.request_date).format('MMM DD, YYYY') %></td>
+                <td><%= payout.propfirm_name %></td>
+                <td><code>#<%= payout.account_login_id %></code></td>
+                <td style="font-weight: 600;">$<%= Number(payout.amount).toLocaleString() %></td>
+                <td>
+                    <span class="badge badge-<%= payout.status === 'approved' ? 'success' : (payout.status === 'pending' ? 'warning' : 'danger') %>">
+                        <%= payout.status %>
+                    </span>
+                </td>
+            </tr>
             <% }) %>
-            <% if (recentPayouts.length === 0) { %>
-                <div class="p-12 text-center">
-                    <div class="w-12 h-12 bg-slate-50 dark:bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <i data-lucide="coffee" class="w-6 h-6 text-slate-300"></i>
-                    </div>
-                    <p class="text-slate-400 text-sm italic">Passive income pending...</p>
-                </div>
-            <% } %>
-        </div>
-    </div>
+        </tbody>
+    </table>
 </div>
 
+<!-- Chart.js and Custom Script -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const isDark = document.documentElement.classList.contains('dark');
-        const gridColor = isDark ? 'rgba(148, 163, 184, 0.1)' : 'rgba(100, 116, 139, 0.1)';
-        const textColor = isDark ? '#94a3b8' : '#64748b';
+    const ctx = document.getElementById('growthChart').getContext('2d');
+    
+    // Prepare data from chartData passed from controller
+    const chartLabels = <%- JSON.stringify(chartData.map(c => c.month)) %>;
+    const chartValues = <%- JSON.stringify(chartData.map(c => c.payout)) %>;
 
-        // Prop Firm ROI Curve Chart
-        const equityCtx = document.getElementById('equityCurveChart').getContext('2d');
-        const payoutGradient = equityCtx.createLinearGradient(0, 0, 0, 400);
-        payoutGradient.addColorStop(0, 'rgba(37, 99, 235, 0.1)');
-        payoutGradient.addColorStop(1, 'rgba(37, 99, 235, 0)');
-
-        const spendingGradient = equityCtx.createLinearGradient(0, 0, 0, 400);
-        spendingGradient.addColorStop(0, 'rgba(244, 63, 94, 0.1)');
-        spendingGradient.addColorStop(1, 'rgba(244, 63, 94, 0)');
-
-        const chartMonths = [<% chartData.forEach(d => { %>'<%= d.month %>',<% }) %>];
-        const payoutData = [<% chartData.forEach(d => { %><%= d.payout %>,<% }) %>];
-        const spendingData = [<% chartData.forEach(d => { %><%= d.spending %>,<% }) %>];
-
-        new Chart(equityCtx, {
-            type: 'line',
-            data: {
-                labels: chartMonths.length > 0 ? chartMonths : ['No Data'],
-                datasets: [
-                    {
-                        label: 'Cumulative Payouts',
-                        data: payoutData.length > 0 ? payoutData : [0],
-                        borderColor: '#2563eb',
-                        backgroundColor: payoutGradient,
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.4,
-                        pointRadius: 4,
-                        pointBackgroundColor: '#2563eb',
-                        pointBorderColor: isDark ? '#1e293b' : '#fff',
-                        pointBorderWidth: 2
-                    },
-                    {
-                        label: 'Cumulative Spending',
-                        data: spendingData.length > 0 ? spendingData : [0],
-                        borderColor: '#f43f5e',
-                        backgroundColor: spendingGradient,
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.4,
-                        pointRadius: 0, // Less prominent for spending
-                        borderDash: [5, 5] // Dashed line for spending
-                    }
-                ]
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: chartLabels,
+            datasets: [{
+                label: 'Cumulative Payouts',
+                data: chartValues,
+                borderColor: '#10b981',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                borderWidth: 3,
+                tension: 0.4,
+                fill: true,
+                pointRadius: 4,
+                pointBackgroundColor: '#fff',
+                pointBorderWidth: 2,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false,
-                        callbacks: {
-                            label: (context) => {
-                                return ` ${context.dataset.label}: $${context.raw.toLocaleString()}`;
-                            }
-                        }
-                    }
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: '#f1f5f9' },
+                    ticks: { font: { family: 'Poppins', size: 10 } }
                 },
-                scales: {
-                    y: {
-                        grid: { color: gridColor },
-                        ticks: { 
-                            color: textColor,
-                            font: { family: 'Poppins', size: 10 },
-                            callback: value => '$' + value.toLocaleString()
-                        }
-                    },
-                    x: {
-                        grid: { display: false },
-                        ticks: { color: textColor, font: { family: 'Poppins', size: 10 } }
-                    }
+                x: {
+                    grid: { display: false },
+                    ticks: { font: { family: 'Poppins', size: 10 } }
                 }
             }
-        });
-        
-        // Refresh icons
-        if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
         }
     });
 </script>
-
