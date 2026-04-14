@@ -12,7 +12,7 @@ exports.getROI = async (req, res) => {
 
         // Overall stats for the ROI page
         const [purchases] = await db.query('SELECT price FROM account_purchases');
-        const [payouts] = await db.query('SELECT amount FROM payouts WHERE status = "approved"');
+        const [payouts] = await db.query("SELECT amount FROM payouts WHERE status = 'approved'");
 
         const totalInvestment = purchases.reduce((sum, p) => sum + Number(p.price), 0);
         const totalReturns = payouts.reduce((sum, p) => sum + Number(p.amount), 0);
@@ -21,14 +21,14 @@ exports.getROI = async (req, res) => {
 
         // Grouping Data for Modal Details
         const [rawPurchases] = await db.query(`
-            SELECT pf.name as propfirm_name, ap.account_size, ap.price, ap.purchase_date, DATE_FORMAT(ap.purchase_date, '%Y-%m') as month
+            SELECT pf.name as propfirm_name, ap.account_size, ap.price, ap.purchase_date, to_char(ap.purchase_date, 'YYYY-MM') as month
             FROM account_purchases ap
             LEFT JOIN prop_firms pf ON ap.prop_firm_id = pf.id
             ORDER BY ap.purchase_date ASC
         `);
 
         const [rawPayouts] = await db.query(`
-            SELECT p.amount, p.request_date, pf.name as propfirm_name, a.account_login_id, DATE_FORMAT(p.request_date, '%Y-%m') as month
+            SELECT p.amount, p.request_date, pf.name as propfirm_name, a.account_login_id, to_char(p.request_date, 'YYYY-MM') as month
             FROM payouts p
             JOIN prop_accounts a ON p.account_id = a.id
             LEFT JOIN prop_firms pf ON a.prop_firm_id = pf.id

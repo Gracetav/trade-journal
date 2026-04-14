@@ -1,16 +1,32 @@
-const mysql = require('mysql2/promise');
+const { Pool } = require('pg');
 require('dotenv').config();
 
-const pool = mysql.createPool({
+const pool = new Pool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASS,
     database: process.env.DB_NAME,
-    port: process.env.DB_PORT || 3306,
-    waitForConnections: true,
-    connectionLimit: 3, // Dihemat sesuai kebutuhan dashboard
-    idleTimeout: 10000, // Tutup koneksi otomatis setelah 10 detik idle
-    queueLimit: 0
+    port: process.env.DB_PORT || 5432,
+    max: 3, // Sama dengan connectionLimit di mysql2
+    idleTimeoutMillis: 10000,
 });
 
-module.exports = pool;
+// Wrapper agar kompatibel dengan syntax [rows] dari mysql2/promise
+const db = {
+    query: async (text, params) => {
+        // Otomatis ganti ? ke $1, $2, dst agar kompatibel dengan Postgres
+        let count = 0;
+        const pgText = text.replace(/\?/g, () => `$${++count}`);
+        const result = await pool.query(pgText, params);
+        return [result.rows, result.fields];
+    },
+    execute: async (text, params) => {
+        let count = 0;
+        const pgText = text.replace(/\?/g, () => `$${++count}`);
+        const result = await pool.query(pgText, params);
+        return [result.rows, result.fields];
+    },
+    pool: pool
+};
+
+module.exports = db;

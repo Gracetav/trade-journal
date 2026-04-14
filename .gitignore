@@ -1,4 +1,8 @@
 node_modules
 .env
+.env.local
 uploads
 *.log
+migrate-supabase.js
+file.sql
+.DS_Store

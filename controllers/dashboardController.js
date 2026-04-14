@@ -9,7 +9,7 @@ exports.getDashboard = async (req, res) => {
             FROM prop_accounts a 
             LEFT JOIN prop_firms pf ON a.prop_firm_id = pf.id
         `);
-        const [payouts] = await db.query('SELECT amount FROM payouts WHERE status = "approved"');
+        const [payouts] = await db.query("SELECT amount FROM payouts WHERE status = 'approved'");
         const [purchases] = await db.query('SELECT price FROM account_purchases');
 
         const totalPnL = trades.reduce((sum, trade) => sum + Number(trade.pnl || 0), 0);
@@ -80,15 +80,15 @@ exports.getDashboard = async (req, res) => {
         // Monthly ROI Analytics
         const [monthlyROI] = await db.query(`
             SELECT 
-                DATE_FORMAT(month_date, '%M %Y') as month_label,
+                to_char(month_date, 'Month YYYY') as month_label,
                 SUM(payout_amount) as total_payout,
                 SUM(purchase_amount) as total_spending,
                 (SUM(payout_amount) - SUM(purchase_amount)) as net_profit,
                 ((SUM(payout_amount) - SUM(purchase_amount)) / NULLIF(SUM(purchase_amount), 0) * 100) as roi_percent
             FROM (
-                SELECT DATE_FORMAT(request_date, '%Y-%m-01') as month_date, amount as payout_amount, 0 as purchase_amount FROM payouts WHERE status = 'approved'
+                SELECT to_char(request_date, 'YYYY-MM-01')::date as month_date, amount as payout_amount, 0 as purchase_amount FROM payouts WHERE status = 'approved'
                 UNION ALL
-                SELECT DATE_FORMAT(purchase_date, '%Y-%m-01') as month_date, 0 as payout_amount, price as purchase_amount FROM account_purchases
+                SELECT to_char(purchase_date, 'YYYY-MM-01')::date as month_date, 0 as payout_amount, price as purchase_amount FROM account_purchases
             ) as monthly_data
             GROUP BY month_date
             ORDER BY month_date DESC
