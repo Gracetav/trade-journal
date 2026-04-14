@@ -1,92 +1,48 @@
-# 📈 Trade Journal - Prop Firm Edition
+# 💰 TradeJournal Pro: The Ultimate Prop Firm Performance Suite
 
-[![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
-[![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
-[![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
-[![EJS](https://img.shields.io/badge/EJS-B4CA65?style=for-the-badge&logo=ejs&logoColor=black)](https://ejs.co/)
-
-> A premium, high-performance trading journal designed specifically for Prop Firm traders to track their evaluations, funded accounts, and overall ROI with clinical precision.
+**Take command of your trading career with the most advanced performance tracking system designed specifically for the modern prop firm trader.**
 
 ---
 
-## ✨ Features
+## 💎 Why TradeJournal Pro?
 
-- **🚀 Real-time Dashboard**: Track your total PnL, Winrate, and Net Profit at a glance.
-- **🏦 Prop Firm Manager**: Monitor multiple accounts (Funded, P1, P2) across different firms like Maven, Goat Funded, etc.
-- **📊 Advanced Analytics**: Detailed ROI calculation, monthly growth charts, and spending vs. payout tracking.
-- **📸 Trade Logging**: Log every trade with pair, setup, risk, PnL, and even screenshots.
-- **⚡ Supabase Integration**: Blazing fast data fetching and secure storage powered by Postgres.
-- **🌑 Dark Mode Architecture**: Premium dark interface designed for long trading sessions.
+Trading is 90% psychology and 10% strategy. **TradeJournal Pro** bridge the gap by providing clinical-grade analytics to help you master your discipline, protect your capital, and scale your funded accounts.
 
----
+### 🎯 Master Your Evaluations
+Stop guessing. Track your progress through P1 and P2 with real-time target progress bars and drawdown monitoring.
 
-## 🛠️ Tech Stack
+### 🏦 Manage Your Portfolio
+Whether you're with Maven, FTMO, or AquaFunded, manage all your accounts in one centralized, high-performance dashboard.
 
-- **Backend**: Node.js & Express.js
-- **Database**: Supabase (Postgres)
-- **Frontend Views**: EJS (Embedded JavaScript)
-- **CSS Framework**: Modern Vanilla CSS with Glassmorphism
-- **Authentication**: Custom Session-based Auth with BCrypt encryption
-- **File Handling**: Multer for screenshot uploads
+### 📈 Maximize Your ROI
+See exactly where your money is going and how much is coming back. Track every investment and payout with precision ROI auditing.
 
 ---
 
-## 🚀 Quick Start
+## ⚡ Key Features
 
-### 1. Prerequisites
-- Node.js (v18+)
-- Supabase Account
-
-### 2. Installation
-```bash
-# Clone the repository
-git clone https://github.com/YourUsername/trade-journal.git
-
-# Install dependencies
-npm install
-```
-
-### 3. Environment Setup
-Create a `.env` file in the root directory and add your credentials:
-```env
-PORT=3000
-DB_HOST=your-supabase-host
-DB_USER=postgres
-DB_PASS=your-password
-DB_NAME=postgres
-DB_PORT=5432
-
-NEXT_PUBLIC_SUPABASE_URL=your-url
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-key
-```
-
-### 4. Running the App
-```bash
-# Start the server
-npm run dev
-```
+- **🏆 Performance HUD**: Instant access to your win rate, avg. PnL, and current balance.
+- **🛡️ Risk Guardian**: Track your risk per trade and ensure you never breach those drawdown limits again.
+- **📊 Interactive ROI Analytics**: Visualize your monthly growth and spending vs. performance.
+- **📝 High-Impact Journaling**: Log trades with setups, notes, and screenshot integration for deep backtesting.
+- **🌑 Elite Dark Interface**: A premium, distraction-free design built for professional environments.
 
 ---
 
-## 🖼️ Preview
+## 🛠️ Built for Performance & Security
 
-*(Add your stunning screenshots here or use a mockup!)*
-
----
-
-## 🔒 Security & Privacy
-- **Raw SQL Protection**: Using parameterized queries to prevent SQL injection.
-- **Encrypted Passwords**: Secure user data with BCrypt hashing.
-- **Safe Session Management**: Session-based auth with middleware protection.
+TradeJournal Pro is built on a rock-solid tech stack to ensure your data is safe and your dashboard is lightning-fast:
+- **Database**: Enterprise-grade **Supabase/PostgreSQL** for maximum reliability.
+- **Speed**: Optimized **Node.js** backend for instantaneous data processing.
+- **Security**: Bank-level encryption for user credentials and session data.
+- **Modernity**: Fully responsive layout that looks stunning on any device.
 
 ---
 
-## 🤝 Contributing
-Contributions are welcome! Feel free to open an issue or submit a pull request.
+## 💼 Commercial License
 
-## 📄 License
-This project is licensed under the **ISC License**.
+*TradeJournal Pro is a premium solution. For licensing inquiries, bulk orders, or custom deployments, please contact the developer.*
 
 ---
 
-**Built with ❤️ for Traders. Let's hit that payout! 🤑**
+**Master Your Trades. Protect Your Capital. Scale Your Future.**
