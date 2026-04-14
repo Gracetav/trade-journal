@@ -121,9 +121,10 @@
 <script>
     const ctx = document.getElementById('growthChart').getContext('2d');
     
-    // Prepare data from chartData passed from controller
-    const chartLabels = <%- JSON.stringify(chartData.map(c => c.month)) %>;
-    const chartValues = <%- JSON.stringify(chartData.map(c => c.payout)) %>;
+    // Prepare data safely with fallbacks
+    const rawData = <%- JSON.stringify(chartData || []) %>;
+    const chartLabels = rawData.length > 0 ? rawData.map(c => c.month) : ['No Data'];
+    const chartValues = rawData.length > 0 ? rawData.map(c => c.payout) : [0];
 
     new Chart(ctx, {
         type: 'line',

@@ -80,7 +80,7 @@ exports.getDashboard = async (req, res) => {
         // Monthly ROI Analytics
         const [monthlyROI] = await db.query(`
             SELECT 
-                to_char(month_date, 'Month YYYY') as month_label,
+                to_char(month_date, 'FMMonth YYYY') as month_label,
                 SUM(payout_amount) as total_payout,
                 SUM(purchase_amount) as total_spending,
                 (SUM(payout_amount) - SUM(purchase_amount)) as net_profit,
@@ -96,7 +96,7 @@ exports.getDashboard = async (req, res) => {
         `);
 
         // Prepare Chart Data (Chronological)
-        const chartData = [...monthlyROI].reverse().map((m, index, arr) => {
+        const chartData = (monthlyROI || []).slice().reverse().map((m, index, arr) => {
             const cumulativePayout = arr.slice(0, index + 1).reduce((sum, item) => sum + Number(item.total_payout), 0);
             const cumulativeSpending = arr.slice(0, index + 1).reduce((sum, item) => sum + Number(item.total_spending), 0);
             return {
