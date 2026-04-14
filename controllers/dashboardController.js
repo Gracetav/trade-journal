@@ -77,32 +77,28 @@ exports.getDashboard = async (req, res) => {
             ORDER BY p.request_date DESC LIMIT 20
         `);
 
-        // Monthly ROI Analytics
+        // Monthly ROI Analytics (Ordered by date ascending for chart)
         const [monthlyROI] = await db.query(`
             SELECT 
                 to_char(month_date, 'FMMonth YYYY') as month_label,
                 SUM(payout_amount) as total_payout,
-                SUM(purchase_amount) as total_spending,
-                (SUM(payout_amount) - SUM(purchase_amount)) as net_profit,
-                ((SUM(payout_amount) - SUM(purchase_amount)) / NULLIF(SUM(purchase_amount), 0) * 100) as roi_percent
+                SUM(purchase_amount) as total_spending
             FROM (
                 SELECT to_char(request_date, 'YYYY-MM-01')::date as month_date, amount as payout_amount, 0 as purchase_amount FROM payouts WHERE status = 'approved'
                 UNION ALL
                 SELECT to_char(purchase_date, 'YYYY-MM-01')::date as month_date, 0 as payout_amount, price as purchase_amount FROM account_purchases
             ) as monthly_data
             GROUP BY month_date
-            ORDER BY month_date DESC
+            ORDER BY month_date ASC
             LIMIT 12
         `);
 
-        // Prepare Chart Data (Chronological Balance Growth)
-        const chartData = (monthlyROI || []).slice().reverse().map((m, index, arr) => {
+        // Prepare Chart Data (Strictly Increasing Cumulative Payouts)
+        const chartData = (monthlyROI || []).map((m, index, arr) => {
             const cumulativePayout = arr.slice(0, index + 1).reduce((sum, item) => sum + Number(item.total_payout), 0);
-            const cumulativeSpending = arr.slice(0, index + 1).reduce((sum, item) => sum + Number(item.total_spending), 0);
-            const netBalance = cumulativePayout - cumulativeSpending;
             return {
                 month: m.month_label,
-                balance: netBalance
+                balance: cumulativePayout
             };
         });
 
