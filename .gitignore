@@ -5,4 +5,6 @@ uploads
 *.log
 migrate-supabase.js
 file.sql
+migrations/migrate-supabase.js
+migrations/file.sql
 .DS_Store

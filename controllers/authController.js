@@ -1,16 +1,5 @@
-const mysql = require('mysql2/promise');
+const db = require('../config/db');
 const bcrypt = require('bcryptjs');
-
-const dbConfig = {
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS || process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    port: process.env.DB_PORT || 3306,
-    ssl: {
-        rejectUnauthorized: false
-    }
-};
 
 exports.getLogin = (req, res) => {
     if (req.session.userId) {
@@ -21,10 +10,8 @@ exports.getLogin = (req, res) => {
 
 exports.postLogin = async (req, res) => {
     const { username, password } = req.body;
-    let connection;
     try {
-        connection = await mysql.createConnection(dbConfig);
-        const [rows] = await connection.query('SELECT * FROM users WHERE username = ?', [username]);
+        const [rows] = await db.query('SELECT * FROM users WHERE username = ?', [username]);
 
         if (rows.length === 0) {
             return res.render('login', { layout: false, error: 'User tidak ditemukan' });
@@ -43,8 +30,6 @@ exports.postLogin = async (req, res) => {
     } catch (error) {
         console.error('Login error:', error);
         res.render('login', { layout: false, error: 'Terjadi kesalahan sistem' });
-    } finally {
-        if (connection) await connection.end();
     }
 };
 
