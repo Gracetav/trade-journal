@@ -4,15 +4,16 @@ exports.getROI = async (req, res) => {
     try {
         const [accounts] = await db.query(`
             SELECT pa.*, pf.name as propfirm_name,
-            ((pa.total_payout - pa.initial_cost) / pa.initial_cost * 100) as roi 
+            ((pa.total_payout - pa.initial_cost) / NULLIF(pa.initial_cost, 0) * 100) as roi 
             FROM prop_accounts pa
             LEFT JOIN prop_firms pf ON pa.prop_firm_id = pf.id
+            WHERE pa.user_id = ?
             ORDER BY pa.created_at DESC
-        `);
+        `, [req.session.userId]);
 
         // Overall stats for the ROI page
-        const [purchases] = await db.query('SELECT price FROM account_purchases');
-        const [payouts] = await db.query("SELECT amount FROM payouts WHERE status = 'approved'");
+        const [purchases] = await db.query('SELECT price FROM account_purchases WHERE user_id = ?', [req.session.userId]);
+        const [payouts] = await db.query("SELECT amount FROM payouts WHERE status = 'approved' AND user_id = ?", [req.session.userId]);
 
         const totalInvestment = purchases.reduce((sum, p) => sum + Number(p.price), 0);
         const totalReturns = payouts.reduce((sum, p) => sum + Number(p.amount), 0);
@@ -24,17 +25,18 @@ exports.getROI = async (req, res) => {
             SELECT pf.name as propfirm_name, ap.account_size, ap.price, ap.purchase_date, to_char(ap.purchase_date, 'YYYY-MM') as month
             FROM account_purchases ap
             LEFT JOIN prop_firms pf ON ap.prop_firm_id = pf.id
+            WHERE ap.user_id = ?
             ORDER BY ap.purchase_date ASC
-        `);
+        `, [req.session.userId]);
 
         const [rawPayouts] = await db.query(`
             SELECT p.amount, p.request_date, pf.name as propfirm_name, a.account_login_id, to_char(p.request_date, 'YYYY-MM') as month
             FROM payouts p
             JOIN prop_accounts a ON p.account_id = a.id
             LEFT JOIN prop_firms pf ON a.prop_firm_id = pf.id
-            WHERE p.status = 'approved'
+            WHERE p.status = 'approved' AND p.user_id = ?
             ORDER BY p.request_date ASC
-        `);
+        `, [req.session.userId]);
 
         const monthsMap = {};
 

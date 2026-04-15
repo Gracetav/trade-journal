@@ -6,8 +6,9 @@ exports.getPurchases = async (req, res) => {
             SELECT ap.*, pf.name as propfirm_name 
             FROM account_purchases ap
             LEFT JOIN prop_firms pf ON ap.prop_firm_id = pf.id
+            WHERE ap.user_id = ?
             ORDER BY ap.purchase_date DESC
-        `);
+        `, [req.session.userId]);
         res.render('purchases/index', { purchases });
     } catch (err) {
         console.error(err);
@@ -39,18 +40,19 @@ exports.createPurchase = async (req, res) => {
     }
 
     try {
+        const userId = req.session.userId;
         for (let i = 0; i < prop_firm_id.length; i++) {
             // 2. Log the purchase
             await db.query(`
-                INSERT INTO account_purchases (prop_firm_id, account_login_id, account_size, account_type, price, purchase_date)
-                VALUES (?, ?, ?, ?, ?, ?)
-            `, [prop_firm_id[i], account_login_id[i], account_size[i] || 0, account_type[i], price[i] || 0, purchase_date[i]]);
+                INSERT INTO account_purchases (prop_firm_id, account_login_id, account_size, account_type, price, purchase_date, user_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            `, [prop_firm_id[i], account_login_id[i], account_size[i] || 0, account_type[i], price[i] || 0, purchase_date[i], userId]);
 
             // 3. Automatically create the account in prop_accounts
             await db.query(`
-                INSERT INTO prop_accounts (prop_firm_id, account_login_id, account_type, balance, initial_cost, status, total_payout)
-                VALUES (?, ?, ?, ?, ?, 'active', 0)
-            `, [prop_firm_id[i], account_login_id[i] || null, account_type[i], account_size[i] || 0, price[i] || 0]);
+                INSERT INTO prop_accounts (prop_firm_id, account_login_id, account_type, balance, initial_cost, status, total_payout, user_id)
+                VALUES (?, ?, ?, ?, ?, 'active', 0, ?)
+            `, [prop_firm_id[i], account_login_id[i] || null, account_type[i], account_size[i] || 0, price[i] || 0, userId]);
         }
 
         res.redirect('/purchases?success=Purchases logged and accounts created');
@@ -62,7 +64,7 @@ exports.createPurchase = async (req, res) => {
 
 exports.editPurchaseForm = async (req, res) => {
     try {
-        const [purchases] = await db.query('SELECT * FROM account_purchases WHERE id = ?', [req.params.id]);
+        const [purchases] = await db.query('SELECT * FROM account_purchases WHERE id = ? AND user_id = ?', [req.params.id, req.session.userId]);
         if (purchases.length === 0) return res.redirect('/purchases');
         const [firms] = await db.query('SELECT * FROM prop_firms ORDER BY name ASC');
         res.render('purchases/edit', { purchase: purchases[0], firms });
@@ -77,8 +79,8 @@ exports.updatePurchase = async (req, res) => {
     try {
         await db.query(`
             UPDATE account_purchases SET prop_firm_id=?, account_login_id=?, account_size=?, account_type=?, price=?, purchase_date=?
-            WHERE id=?
-        `, [prop_firm_id, account_login_id, account_size, account_type, price, purchase_date, req.params.id]);
+            WHERE id=? AND user_id=?
+        `, [prop_firm_id, account_login_id, account_size, account_type, price, purchase_date, req.params.id, req.session.userId]);
         res.redirect('/purchases?success=Purchase updated successfully');
     } catch (err) {
         console.error(err);
@@ -88,7 +90,7 @@ exports.updatePurchase = async (req, res) => {
 
 exports.deletePurchase = async (req, res) => {
     try {
-        await db.query('DELETE FROM account_purchases WHERE id = ?', [req.params.id]);
+        await db.query('DELETE FROM account_purchases WHERE id = ? AND user_id = ?', [req.params.id, req.session.userId]);
         res.redirect('/purchases?success=Purchase record deleted');
     } catch (err) {
         console.error(err);

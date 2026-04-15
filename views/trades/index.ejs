@@ -82,8 +82,8 @@
                         </div>
                     </td>
                     <td class="hidden xl:table-cell px-6 py-4 text-right">
-                        <div class="text-xs text-slate-500 dark:text-slate-400 font-medium truncate max-w-[120px]" title="<%= trade.propfirm_name %>">
-                            🏦 <%= trade.propfirm_name || 'N/A' %>
+                        <div class="text-xs text-slate-500 dark:text-slate-400 font-medium truncate max-w-[120px]" title="<%= trade.propfirm_name || trade.real_broker_name %>">
+                            🏦 <%= trade.propfirm_name || trade.real_broker_name || 'N/A' %>
                         </div>
                     </td>
                     <td class="px-6 py-4 text-right">
@@ -137,7 +137,7 @@
 
             <div class="flex items-center justify-between pt-1">
                 <div class="text-[10px] text-slate-500 font-bold truncate max-w-[150px]">
-                    🏦 <%= trade.propfirm_name || 'N/A' %>
+                    🏦 <%= trade.propfirm_name || trade.real_broker_name || 'N/A' %>
                 </div>
                 <div class="flex gap-2">
                     <a href="/trades/<%= trade.id %>/edit" class="p-2.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-xl">

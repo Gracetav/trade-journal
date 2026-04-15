@@ -23,8 +23,9 @@ exports.getPayouts = async (req, res) => {
             FROM payouts p 
             JOIN prop_accounts a ON p.account_id = a.id 
             LEFT JOIN prop_firms pf ON a.prop_firm_id = pf.id
+            WHERE p.user_id = ?
             ORDER BY p.request_date DESC
-        `);
+        `, [req.session.userId]);
         res.render('payouts/index', { payouts });
     } catch (err) {
         console.error(err);
@@ -37,7 +38,8 @@ exports.addPayoutForm = async (req, res) => {
         SELECT a.id, pf.name as propfirm_name, a.account_login_id 
         FROM prop_accounts a 
         LEFT JOIN prop_firms pf ON a.prop_firm_id = pf.id
-    `);
+        WHERE a.user_id = ?
+    `, [req.session.userId]);
     res.render('payouts/add', { accounts });
 };
 
@@ -51,9 +53,9 @@ exports.createPayout = (req, res) => {
 
         try {
             await db.query(`
-                INSERT INTO payouts (account_id, amount, account_balance, status, request_date, certificate)
-                VALUES (?, ?, ?, ?, ?, ?)
-            `, [account_id, amount, account_balance, status, request_date, certificate]);
+                INSERT INTO payouts (account_id, amount, account_balance, status, request_date, certificate, user_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            `, [account_id, amount, account_balance, status, request_date, certificate, req.session.userId]);
             res.redirect('/payouts?success=Payout request saved');
         } catch (err) {
             console.error(err);
@@ -64,12 +66,13 @@ exports.createPayout = (req, res) => {
 
 exports.editPayoutForm = async (req, res) => {
     try {
-        const [payouts] = await db.query('SELECT * FROM payouts WHERE id = ?', [req.params.id]);
+        const [payouts] = await db.query('SELECT * FROM payouts WHERE id = ? AND user_id = ?', [req.params.id, req.session.userId]);
         const [accounts] = await db.query(`
             SELECT a.id, pf.name as propfirm_name, a.account_login_id 
             FROM prop_accounts a 
             LEFT JOIN prop_firms pf ON a.prop_firm_id = pf.id
-        `);
+            WHERE a.user_id = ?
+        `, [req.session.userId]);
         if (payouts.length === 0) return res.redirect('/payouts');
         res.render('payouts/edit', { payout: payouts[0], accounts });
     } catch (err) {
@@ -93,8 +96,8 @@ exports.updatePayout = (req, res) => {
             params.push(req.file.filename ? `/uploads/${req.file.filename}` : 'data:image/png;base64,' + req.file.buffer.toString('base64'));
         }
 
-        query += ' WHERE id=?';
-        params.push(req.params.id);
+        query += ' WHERE id=? AND user_id=?';
+        params.push(req.params.id, req.session.userId);
 
         try {
             await db.query(query, params);
@@ -108,7 +111,7 @@ exports.updatePayout = (req, res) => {
 
 exports.deletePayout = async (req, res) => {
     try {
-        await db.query('DELETE FROM payouts WHERE id = ?', [req.params.id]);
+        await db.query('DELETE FROM payouts WHERE id = ? AND user_id = ?', [req.params.id, req.session.userId]);
         res.redirect('/payouts?success=Payout record deleted');
     } catch (err) {
         console.error(err);

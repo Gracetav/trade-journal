@@ -6,8 +6,9 @@ exports.getAccounts = async (req, res) => {
             SELECT pa.*, pf.name as propfirm_name 
             FROM prop_accounts pa
             LEFT JOIN prop_firms pf ON pa.prop_firm_id = pf.id
+            WHERE pa.user_id = ?
             ORDER BY pa.created_at DESC
-        `);
+        `, [req.session.userId]);
         res.render('accounts/index', { accounts });
     } catch (err) {
         console.error(err);
@@ -31,9 +32,9 @@ exports.createAccount = async (req, res) => {
     const initial_cost = req.body.initial_cost || 0;
     try {
         await db.query(`
-            INSERT INTO prop_accounts (prop_firm_id, account_login_id, account_type, balance, initial_cost, target_profit, status)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        `, [prop_firm_id, account_login_id || null, account_type, balance, initial_cost, target_profit || 0, status || 'active']);
+            INSERT INTO prop_accounts (prop_firm_id, account_login_id, account_type, balance, initial_cost, target_profit, status, user_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        `, [prop_firm_id, account_login_id || null, account_type, balance, initial_cost, target_profit || 0, status || 'active', req.session.userId]);
         res.redirect('/accounts?success=Account added successfully');
     } catch (err) {
         console.error(err);
@@ -43,7 +44,7 @@ exports.createAccount = async (req, res) => {
 
 exports.editAccountForm = async (req, res) => {
     try {
-        const [accounts] = await db.query('SELECT * FROM prop_accounts WHERE id = ?', [req.params.id]);
+        const [accounts] = await db.query('SELECT * FROM prop_accounts WHERE id = ? AND user_id = ?', [req.params.id, req.session.userId]);
         if (accounts.length === 0) return res.redirect('/accounts');
         const [firms] = await db.query('SELECT * FROM prop_firms ORDER BY name ASC');
         res.render('accounts/edit', { account: accounts[0], firms });
@@ -63,8 +64,8 @@ exports.updateAccount = async (req, res) => {
             UPDATE prop_accounts SET 
             prop_firm_id=?, account_login_id=?, account_type=?, balance=?, initial_cost=?, 
             status=?, total_payout=?
-            WHERE id=?
-        `, [prop_firm_id, account_login_id || null, account_type, balance, initial_cost, status, total_payout || 0, req.params.id]);
+            WHERE id=? AND user_id=?
+        `, [prop_firm_id, account_login_id || null, account_type, balance, initial_cost, status, total_payout || 0, req.params.id, req.session.userId]);
         res.redirect('/accounts?success=Account updated successfully');
     } catch (err) {
         console.error(err);
@@ -74,7 +75,7 @@ exports.updateAccount = async (req, res) => {
 
 exports.deleteAccount = async (req, res) => {
     try {
-        await db.query('DELETE FROM prop_accounts WHERE id = ?', [req.params.id]);
+        await db.query('DELETE FROM prop_accounts WHERE id = ? AND user_id = ?', [req.params.id, req.session.userId]);
         res.redirect('/accounts?success=Account deleted successfully');
     } catch (err) {
         console.error(err);

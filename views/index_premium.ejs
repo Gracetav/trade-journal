@@ -1,0 +1,257 @@
+<!-- Tailwind & Fonts -->
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: { fontPadding: { sans: ['Poppins', 'sans-serif'] } }
+        }
+    }
+</script>
+
+<style>
+    body { font-family: 'Poppins', sans-serif; transition: all 0.3s ease; }
+    .premium-card { transition: all 0.3s ease; }
+    .stat-val { font-size: 1.875rem; font-weight: 800; line-height: 1.2; }
+</style>
+
+<div class="p-6 max-w-7xl mx-auto pb-24 transition-colors duration-300">
+    <!-- Header -->
+    <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-800 dark:text-white tracking-tight">Welcome back, <%= username %></h1>
+            <p class="text-slate-500 dark:text-slate-400 font-medium tracking-wide">Premium Portfolio Analytics Overview</p>
+        </div>
+        <div class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-4 py-2 rounded-2xl border border-emerald-500/20 text-[10px] font-bold uppercase tracking-widest self-start">
+            Traders Pro Active
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+        <div class="bg-white dark:bg-white/5 p-6 rounded-[2rem] border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-none border-l-4 border-l-blue-500 transition-all">
+            <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Total PnL</p>
+            <div class="stat-val <%= stats.totalPnL >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
+                <%= stats.totalPnL >= 0 ? '+' : '' %>$<%= Number(stats.totalPnL || 0).toLocaleString() %>
+            </div>
+        </div>
+        <div class="bg-white dark:bg-white/5 p-6 rounded-[2rem] border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-none border-l-4 border-l-emerald-500 transition-all">
+            <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Win Rate</p>
+            <div class="stat-val text-slate-800 dark:text-white"><%= stats.winrate %>%</div>
+        </div>
+        <div class="bg-white dark:bg-white/5 p-6 rounded-[2rem] border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-none border-l-4 border-l-purple-500 transition-all">
+            <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Total Payout</p>
+            <div class="stat-val text-emerald-500">$<%= Number(stats.totalPayout).toLocaleString() %></div>
+        </div>
+        <div class="bg-white dark:bg-white/5 p-6 rounded-[2rem] border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-none border-l-4 border-l-amber-500 transition-all">
+            <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Net ROI</p>
+            <div class="stat-val text-blue-500"><%= stats.totalROI %>%</div>
+        </div>
+    </div>
+
+    <!-- Main Charts Row -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+        <div class="lg:col-span-2 bg-white dark:bg-white/5 p-8 rounded-[2.5rem] shadow-sm dark:shadow-none border border-slate-200 dark:border-white/10 overflow-hidden">
+            <h3 class="text-slate-800 dark:text-white font-black text-lg mb-6 flex items-center gap-3">
+                <i data-lucide="trending-up" class="w-5 h-5 text-emerald-500"></i>
+                Equity Growth Curve
+            </h3>
+            <div class="h-[350px]">
+                <canvas id="growthChart"></canvas>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-white/5 p-8 rounded-[2.5rem] shadow-sm dark:shadow-none border border-slate-200 dark:border-white/10 flex flex-col">
+            <h3 class="text-slate-800 dark:text-white font-black text-lg mb-6">Top Performance Firms</h3>
+            <div class="space-y-3 flex-grow overflow-y-auto pr-2">
+                <% firmStats.slice(0, 6).forEach(firm => { %>
+                <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-white/5 rounded-2xl border border-slate-100 dark:border-white/5 hover:border-emerald-500/30 transition-all group">
+                    <div>
+                        <p class="font-bold text-slate-800 dark:text-slate-200 group-hover:text-emerald-500 transition-colors"><%= firm.name %></p>
+                        <p class="text-[9px] text-slate-400 dark:text-slate-500 font-black uppercase"><%= firm.total_accounts %> Accounts</p>
+                    </div>
+                    <p class="font-black text-emerald-600 dark:text-emerald-400 tracking-tighter">$<%= Number(firm.total_payout).toLocaleString() %></p>
+                </div>
+                <% }) %>
+            </div>
+        </div>
+    </div>
+
+    <!-- Advanced Analytics Sections -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+        <div class="bg-white dark:bg-white/5 p-8 rounded-[2.5rem] shadow-sm dark:shadow-none border border-slate-200 dark:border-white/10">
+            <h3 class="text-slate-400 dark:text-slate-500 font-black text-sm mb-6 uppercase tracking-widest">PnL Distribution By Duration</h3>
+            <div class="h-[250px]">
+                <canvas id="distChart"></canvas>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-white/5 p-8 rounded-[2.5rem] shadow-sm dark:shadow-none border border-slate-200 dark:border-white/10">
+            <h3 class="text-slate-400 dark:text-slate-500 font-black text-sm mb-6 uppercase tracking-widest">PnL by Trade Duration (Scatter)</h3>
+            <div class="h-[250px]">
+                <canvas id="scatterChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="bg-white dark:bg-white/5 p-8 rounded-[2.5rem] shadow-sm dark:shadow-none border border-slate-200 dark:border-white/10">
+            <h3 class="text-slate-400 dark:text-slate-500 font-black text-sm mb-6 uppercase tracking-widest">Contract Profit Analysis</h3>
+            <div class="h-[250px]">
+                <canvas id="contractProfitChart"></canvas>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-white/5 p-8 rounded-[2.5rem] shadow-sm dark:shadow-none border border-slate-200 dark:border-white/10">
+            <h3 class="text-slate-400 dark:text-slate-500 font-black text-sm mb-6 uppercase tracking-widest">Contract Volume Analysis</h3>
+            <div class="h-[250px]">
+                <canvas id="contractVolumeChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    (function() {
+        const isDark = document.documentElement.classList.contains('dark');
+        const labelColor = isDark ? '#94a3b8' : '#64748b';
+        const gridColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+
+        Chart.defaults.font.family = "'Poppins', sans-serif";
+        Chart.defaults.color = labelColor;
+
+        const analytics = <%- JSON.stringify(analyticsData) %>;
+
+        // 1. Growth Chart
+        const growthCtx = document.getElementById('growthChart').getContext('2d');
+        const growData = <%- JSON.stringify(chartData) %>;
+        new Chart(growthCtx, {
+            type: 'line',
+            data: {
+                labels: growData.map(d => d.month),
+                datasets: [{
+                    data: growData.map(d => d.payout),
+                    borderColor: '#10b981',
+                    borderWidth: 4,
+                    tension: 0.4,
+                    pointRadius: 0,
+                    fill: true,
+                    backgroundColor: (ctx) => {
+                        const gradient = ctx.chart.ctx.createLinearGradient(0, 0, 0, 400);
+                        gradient.addColorStop(0, isDark ? 'rgba(16, 185, 129, 0.15)' : 'rgba(16, 185, 129, 0.1)');
+                        gradient.addColorStop(1, 'rgba(16, 185, 129, 0)');
+                        return gradient;
+                    }
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { 
+                    x: { grid: { display: false }, ticks: { color: labelColor, font: { size: 10, weight: 'bold' } } },
+                    y: { grid: { color: gridColor }, ticks: { color: labelColor, font: { size: 10, weight: 'bold' } } }
+                }
+            }
+        });
+
+        // 2. Distribution Chart (Bar)
+        const distCtx = document.getElementById('distChart').getContext('2d');
+        new Chart(distCtx, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(analytics.durationHistogram),
+                datasets: [{
+                    label: 'PnL',
+                    data: Object.values(analytics.durationHistogram),
+                    backgroundColor: Object.values(analytics.durationHistogram).map(v => v >= 0 ? '#10b981' : '#f43f5e'),
+                    borderRadius: 12
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { display: false }, ticks: { color: labelColor } },
+                    y: { grid: { color: gridColor }, ticks: { color: labelColor } }
+                }
+            }
+        });
+
+        // 3. Scatter Chart
+        const scatterCtx = document.getElementById('scatterChart').getContext('2d');
+        new Chart(scatterCtx, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Trades',
+                    data: analytics.durationScatter,
+                    backgroundColor: '#3b82f6',
+                    pointRadius: 6,
+                    pointHoverRadius: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { title: { display: true, text: 'Duration (Min)', color: labelColor }, grid: { color: gridColor }, ticks: { color: labelColor } },
+                    y: { title: { display: true, text: 'PnL ($)', color: labelColor }, grid: { color: gridColor }, ticks: { color: labelColor } }
+                }
+            }
+        });
+
+        // 4. Contract Profit Chart
+        const profitCtx = document.getElementById('contractProfitChart').getContext('2d');
+        new Chart(profitCtx, {
+            type: 'bar',
+            data: {
+                labels: analytics.contracts.map(c => c.name),
+                datasets: [{
+                    data: analytics.contracts.map(c => c.pnl),
+                    backgroundColor: '#8b5cf6',
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { color: gridColor }, ticks: { color: labelColor } },
+                    y: { grid: { display: false }, ticks: { color: labelColor } }
+                }
+            }
+        });
+
+        // 5. Contract Volume Chart
+        const volumeCtx = document.getElementById('contractVolumeChart').getContext('2d');
+        new Chart(volumeCtx, {
+            type: 'bar',
+            data: {
+                labels: analytics.contracts.map(c => c.name),
+                datasets: [{
+                    data: analytics.contracts.map(c => c.volume),
+                    backgroundColor: '#f59e0b',
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { display: false }, ticks: { color: labelColor } },
+                    y: { grid: { color: gridColor }, ticks: { color: labelColor } }
+                }
+            }
+        });
+
+        lucide.createIcons();
+    })();
+</script>
