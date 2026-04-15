@@ -121,19 +121,20 @@
 <script>
     const ctx = document.getElementById('growthChart').getContext('2d');
     
-    // Prepare data from chartData passed from controller
-    const chartLabels = <%- JSON.stringify(chartData.map(c => c.month)) %>;
-    const chartValues = <%- JSON.stringify(chartData.map(c => c.payout)) %>;
+    // Prepare data safely with fallbacks
+    const rawData = <%- JSON.stringify(chartData || []) %>;
+    const chartLabels = rawData.length > 0 ? rawData.map(c => c.month) : ['No Data'];
+    const chartValues = rawData.length > 0 ? rawData.map(c => c.balance) : [0];
 
     new Chart(ctx, {
         type: 'line',
         data: {
             labels: chartLabels,
             datasets: [{
-                label: 'Cumulative Payouts',
+                label: 'Cumulative Payout Growth',
                 data: chartValues,
                 borderColor: '#10b981',
-                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                backgroundColor: 'rgba(16, 185, 129, 0.05)',
                 borderWidth: 3,
                 tension: 0.4,
                 fill: true,

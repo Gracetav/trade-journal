@@ -83,7 +83,7 @@ exports.getDashboard = async (req, res) => {
             ORDER BY p.request_date DESC LIMIT 20
         `, [userId]);
 
-        // Monthly ROI Analytics (Latest 12 Months)
+        // Monthly ROI Analytics (Ordered by date ascending for chart) (Latest 12 Months)
         const [monthlyROI] = await db.query(`
             SELECT 
                 to_char(month_date, 'FMMonth YYYY') as month_label,
@@ -97,7 +97,7 @@ exports.getDashboard = async (req, res) => {
                 FROM account_purchases WHERE user_id = ?
             ) as monthly_data
             GROUP BY month_date
-            ORDER BY month_date DESC
+            ORDER BY month_date ASC
             LIMIT 12
         `, [userId, userId]);
 
@@ -108,8 +108,7 @@ exports.getDashboard = async (req, res) => {
             const cumulativeSpending = sortedROI.slice(0, index + 1).reduce((sum, item) => sum + Number(item.total_spending || 0), 0);
             return {
                 month: m.month_label,
-                payout: cumulativePayout,
-                spending: cumulativeSpending
+                balance: cumulativePayout
             };
         });
 
