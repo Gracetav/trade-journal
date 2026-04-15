@@ -1,68 +1,86 @@
-<div class="page-header">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
+<div class="space-y-8">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] shadow-sm border border-slate-100 dark:border-slate-700">
         <div>
-            <h1 class="page-title">Prop Firm Accounts</h1>
-            <p class="page-subtitle">Manage and track your evaluation and funded stages.</p>
+            <h1 class="text-3xl font-black text-slate-800 dark:text-white tracking-tight">Prop Firm Accounts</h1>
+            <p class="text-slate-500 dark:text-slate-400 font-medium">Kelola dan pantau progress akun evaluasi serta funded Anda.</p>
         </div>
-        <a href="/accounts/add" class="btn btn-primary">
-            <i data-lucide="plus" style="width: 16px;"></i>
-            Add New Account
+        <a href="/accounts/add" class="flex items-center gap-2 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-xl shadow-blue-500/20 transition-all transform hover:-translate-y-1">
+            <i data-lucide="plus" class="w-5 h-5"></i>
+            Tambah Akun Baru
         </a>
     </div>
-</div>
 
-<div class="card-table-wrapper">
-    <div class="card-header">
-        <h3 class="card-title">All Trading Accounts</h3>
-    </div>
-    <table>
-        <thead>
-            <tr>
-                <th>Trading Info</th>
-                <th>Type</th>
-                <th>Size / Balance</th>
-                <th>Status</th>
-                <th style="text-align: right;">Total Payout</th>
-                <th style="text-align: right;">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% accounts.forEach(acc => { %>
-            <tr>
-                <td>
-                    <div style="font-weight: 600;"><%= acc.propfirm_name %></div>
-                    <div style="font-size: 0.75rem; color: var(--text-muted);">#<%= acc.account_login_id || 'N/A' %></div>
-                </td>
-                <td>
-                    <span class="badge badge-info"><%= acc.account_type %></span>
-                </td>
-                <td>
-                    <div style="font-weight: 600;">$<%= Number(acc.balance).toLocaleString() %></div>
-                    <div style="font-size: 0.7rem; color: var(--text-muted);">Equity Value</div>
-                </td>
-                <td>
-                    <span class="badge badge-<%= acc.status === 'active' || acc.status === 'funded' ? 'success' : (acc.status === 'passed' ? 'info' : 'danger') %>">
-                        <%= acc.status %>
-                    </span>
-                </td>
-                <td style="text-align: right; font-weight: 700; color: var(--accent);">
-                    $<%= Number(acc.total_payout).toLocaleString() %>
-                </td>
-                <td style="text-align: right;">
-                    <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
-                        <a href="/accounts/<%= acc.id %>/edit" class="btn btn-ghost" style="padding: 0.4rem;"><i data-lucide="edit-3" style="width: 16px;"></i></a>
-                        <form action="/accounts/<%= acc.id %>?_method=DELETE" method="POST" onsubmit="return confirm('Delete this account?')">
-                            <button type="submit" class="btn btn-ghost" style="padding: 0.4rem; color: var(--danger);"><i data-lucide="trash-2" style="width: 16px;"></i></button>
-                        </form>
-                    </div>
-                </td>
-            </tr>
-            <% }) %>
-        </tbody>
-    </table>
-    <% if (accounts.length === 0) { %>
-        <div style="padding: 3rem; text-align: center; color: var(--text-muted); font-style: italic;">
-            No accounts found. Add your first prop firm account to get started.
+    <!-- Accounts Table -->
+    <div class="bg-white dark:bg-slate-800 rounded-[2.5rem] shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
+        <div class="px-8 py-6 border-b border-slate-50 dark:border-slate-700 font-black text-slate-400 text-xs uppercase tracking-[0.2em]">
+            Overview Portofolio
         </div>
-    <% } %>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="bg-slate-50/50 dark:bg-slate-900/50">
+                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Trading Info</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Type</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Size / Balance</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Total Payout</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50 dark:divide-slate-700">
+                    <% accounts.forEach(acc => { %>
+                    <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-900/50 transition-colors group">
+                        <td class="px-8 py-6">
+                            <div class="font-bold text-slate-800 dark:text-slate-200 group-hover:text-blue-600 transition-colors"><%= acc.propfirm_name %></div>
+                            <div class="text-[10px] font-black text-slate-400 uppercase mt-0.5">ID: #<%= acc.account_login_id || 'N/A' %></div>
+                        </td>
+                        <td class="px-8 py-6">
+                            <span class="px-3 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg text-[10px] font-black uppercase">
+                                <%= acc.account_type %>
+                            </span>
+                        </td>
+                        <td class="px-8 py-6">
+                            <div class="font-bold text-slate-800 dark:text-slate-200">$<%= Number(acc.balance).toLocaleString() %></div>
+                            <div class="text-[10px] font-black text-slate-400 uppercase mt-0.5">Equity Value</div>
+                        </td>
+                        <td class="px-8 py-6">
+                            <span class="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest
+                                <%= acc.status === 'active' || acc.status === 'funded' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 
+                                   (acc.status === 'passed' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' : 
+                                   'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400') %>">
+                                <%= acc.status %>
+                            </span>
+                        </td>
+                        <td class="px-8 py-6 text-right font-black text-blue-600 dark:text-blue-400">
+                            $<%= Number(acc.total_payout).toLocaleString() %>
+                        </td>
+                        <td class="px-8 py-6 text-right">
+                            <div class="flex justify-end gap-2">
+                                <a href="/accounts/<%= acc.id %>/edit" class="p-2.5 bg-slate-50 dark:bg-slate-900 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 rounded-xl transition-all border border-slate-100 dark:border-slate-700">
+                                    <i data-lucide="edit-3" class="w-4 h-4"></i>
+                                </a>
+                                <form action="/accounts/<%= acc.id %>?_method=DELETE" method="POST" class="delete-form">
+                                    <button type="submit" class="p-2.5 bg-slate-50 dark:bg-slate-900 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-xl transition-all border border-slate-100 dark:border-slate-700">
+                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+        <% if (accounts.length === 0) { %>
+            <div class="px-8 py-20 text-center">
+                <div class="w-20 h-20 bg-slate-50 dark:bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i data-lucide="database" class="w-10 h-10 text-slate-300"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Belum ada akun</h3>
+                <p class="text-slate-500 mb-8">Daftarkan akun prop firm pertama Anda untuk mulai memantau progress.</p>
+                <a href="/accounts/add" class="text-blue-600 font-bold hover:underline">Tambah Akun Sekarang &rarr;</a>
+            </div>
+        <% } %>
+    </div>
 </div>

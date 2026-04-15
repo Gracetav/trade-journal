@@ -147,7 +147,7 @@ exports.getDashboard = async (req, res) => {
             durationHistogram: durationDist
         };
 
-        const viewName = req.session.role === 'akun_real' ? 'index_premium' : 'index';
+        const viewName = 'index';
         
         res.render(viewName, {
             stats: { 
