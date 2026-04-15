@@ -2,15 +2,18 @@ const db = require('../config/db');
 
 exports.getDashboard = async (req, res) => {
     try {
-        // Stats
-        const [trades] = await db.query('SELECT result, pnl FROM trades');
+        const userId = req.session.userId;
+
+        // Stats & Detailed Trades for Analytics
+        const [trades] = await db.query('SELECT result, pnl, pair, volume, entry_time, exit_time FROM trades WHERE user_id = ?', [userId]);
         const [accounts] = await db.query(`
             SELECT a.*, pf.name as propfirm_name 
             FROM prop_accounts a 
             LEFT JOIN prop_firms pf ON a.prop_firm_id = pf.id
-        `);
-        const [payouts] = await db.query("SELECT amount FROM payouts WHERE status = 'approved'");
-        const [purchases] = await db.query('SELECT price FROM account_purchases');
+            WHERE a.user_id = ?
+        `, [userId]);
+        const [payouts] = await db.query("SELECT amount, request_date FROM payouts WHERE status = 'approved' AND user_id = ?", [userId]);
+        const [purchases] = await db.query('SELECT price FROM account_purchases WHERE user_id = ?', [userId]);
 
         const totalPnL = trades.reduce((sum, trade) => sum + Number(trade.pnl || 0), 0);
         const winTrades = trades.filter(t => t.result === 'win').length;
@@ -51,12 +54,13 @@ exports.getDashboard = async (req, res) => {
                 SELECT a2.prop_firm_id, SUM(p.amount) as total_amount
                 FROM payouts p
                 JOIN prop_accounts a2 ON p.account_id = a2.id
-                WHERE p.status = 'approved'
+                WHERE p.status = 'approved' AND p.user_id = ?
                 GROUP BY a2.prop_firm_id
             ) payout_sums ON pf.id = payout_sums.prop_firm_id
+            WHERE a.user_id = ?
             GROUP BY pf.id, pf.name
             ORDER BY total_payout DESC
-        `);
+        `, [userId, userId]);
 
         // History Sections
         const [recentAccounts] = await db.query(`
@@ -66,39 +70,42 @@ exports.getDashboard = async (req, res) => {
             0 as target_progress
             FROM prop_accounts a 
             LEFT JOIN prop_firms pf ON a.prop_firm_id = pf.id
+            WHERE a.user_id = ?
             ORDER BY a.created_at DESC LIMIT 20
-        `);
+        `, [userId]);
         
         const [recentPayouts] = await db.query(`
             SELECT p.*, pf.name as propfirm_name, a.account_login_id
             FROM payouts p 
             JOIN prop_accounts a ON p.account_id = a.id 
             LEFT JOIN prop_firms pf ON a.prop_firm_id = pf.id
+            WHERE p.user_id = ?
             ORDER BY p.request_date DESC LIMIT 20
-        `);
+        `, [userId]);
 
-        // Monthly ROI Analytics
+        // Monthly ROI Analytics (Latest 12 Months)
         const [monthlyROI] = await db.query(`
             SELECT 
-                to_char(month_date, 'Month YYYY') as month_label,
+                to_char(month_date, 'FMMonth YYYY') as month_label,
                 SUM(payout_amount) as total_payout,
-                SUM(purchase_amount) as total_spending,
-                (SUM(payout_amount) - SUM(purchase_amount)) as net_profit,
-                ((SUM(payout_amount) - SUM(purchase_amount)) / NULLIF(SUM(purchase_amount), 0) * 100) as roi_percent
+                SUM(purchase_amount) as total_spending
             FROM (
-                SELECT to_char(request_date, 'YYYY-MM-01')::date as month_date, amount as payout_amount, 0 as purchase_amount FROM payouts WHERE status = 'approved'
+                SELECT to_char(request_date, 'YYYY-MM-01')::date as month_date, amount as payout_amount, 0 as purchase_amount 
+                FROM payouts WHERE status = 'approved' AND user_id = ?
                 UNION ALL
-                SELECT to_char(purchase_date, 'YYYY-MM-01')::date as month_date, 0 as payout_amount, price as purchase_amount FROM account_purchases
+                SELECT to_char(purchase_date, 'YYYY-MM-01')::date as month_date, 0 as payout_amount, price as purchase_amount 
+                FROM account_purchases WHERE user_id = ?
             ) as monthly_data
             GROUP BY month_date
             ORDER BY month_date DESC
             LIMIT 12
-        `);
+        `, [userId, userId]);
 
-        // Prepare Chart Data (Chronological)
-        const chartData = [...monthlyROI].reverse().map((m, index, arr) => {
-            const cumulativePayout = arr.slice(0, index + 1).reduce((sum, item) => sum + Number(item.total_payout), 0);
-            const cumulativeSpending = arr.slice(0, index + 1).reduce((sum, item) => sum + Number(item.total_spending), 0);
+        // Prepare Chart Data (Chronological + Null Safety)
+        const sortedROI = (monthlyROI || []).slice().reverse();
+        const chartData = sortedROI.map((m, index) => {
+            const cumulativePayout = sortedROI.slice(0, index + 1).reduce((sum, item) => sum + Number(item.total_payout || 0), 0);
+            const cumulativeSpending = sortedROI.slice(0, index + 1).reduce((sum, item) => sum + Number(item.total_spending || 0), 0);
             return {
                 month: m.month_label,
                 payout: cumulativePayout,
@@ -106,7 +113,44 @@ exports.getDashboard = async (req, res) => {
             };
         });
 
-        res.render('index', {
+        // Add a "Start" point at 0 to ensure the line has a base
+        if (chartData.length > 0) {
+            chartData.unshift({ month: 'Start', payout: 0, spending: 0 });
+        }
+
+        // Advanced Analytics Processing
+        const contractAnalysis = {};
+        const durationAnalysis = []; // For scatter
+        const durationDist = { '0-1h': 0, '1-4h': 0, '4-12h': 0, '12h+': 0 };
+
+        trades.forEach(t => {
+            // Contract Analysis
+            if (!contractAnalysis[t.pair]) contractAnalysis[t.pair] = { pnl: 0, volume: 0 };
+            contractAnalysis[t.pair].pnl += Number(t.pnl);
+            contractAnalysis[t.pair].volume += Number(t.volume || 0);
+
+            // Duration Analysis
+            if (t.entry_time && t.exit_time) {
+                const durationMinutes = Math.floor((new Date(t.exit_time) - new Date(t.entry_time)) / (1000 * 60));
+                const pnl = Number(t.pnl);
+                durationAnalysis.push({ x: durationMinutes, y: pnl });
+
+                if (durationMinutes <= 60) durationDist['0-1h'] += pnl;
+                else if (durationMinutes <= 240) durationDist['1-4h'] += pnl;
+                else if (durationMinutes <= 720) durationDist['4-12h'] += pnl;
+                else durationDist['12h+'] += pnl;
+            }
+        });
+
+        const analyticsData = {
+            contracts: Object.keys(contractAnalysis).map(k => ({ name: k, ...contractAnalysis[k] })),
+            durationScatter: durationAnalysis,
+            durationHistogram: durationDist
+        };
+
+        const viewName = req.session.role === 'akun_real' ? 'index_premium' : 'index';
+        
+        res.render(viewName, {
             stats: { 
                 totalPnL, 
                 winrate, 
@@ -123,9 +167,11 @@ exports.getDashboard = async (req, res) => {
                 totalROI,
                 netProfit
             },
+            username: req.session.username,
             firmStats,
             monthlyROI,
             chartData,
+            analyticsData, // New analytics data
             recentAccounts,
             recentPayouts
         });

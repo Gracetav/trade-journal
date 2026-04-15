@@ -34,6 +34,7 @@ app.locals.moment = require('moment');
 app.use((req, res, next) => {
     res.locals.path = req.path;
     res.locals.username = req.session.username;
+    res.locals.role = req.session.role;
     next();
 });
 
@@ -46,6 +47,10 @@ const payoutRoutes = require('./routes/payouts');
 const purchaseRoutes = require('./routes/purchases');
 const roiRoutes = require('./routes/roi');
 const propFirmRoutes = require('./routes/propFirms');
+const calendarRoutes = require('./routes/calendar');
+const mt5Routes = require('./routes/mt5');
+const importRoutes = require('./routes/import');
+const realAccountRoutes = require('./routes/realAccounts');
 
 app.use('/', authRoutes);
 app.use('/', authMiddleware, dashboardRoutes);
@@ -55,6 +60,10 @@ app.use('/payouts', authMiddleware, payoutRoutes);
 app.use('/purchases', authMiddleware, purchaseRoutes);
 app.use('/roi', authMiddleware, roiRoutes);
 app.use('/propfirms', authMiddleware, propFirmRoutes);
+app.use('/calendar', authMiddleware, calendarRoutes);
+app.use('/api/mt5', mt5Routes);
+app.use('/', authMiddleware, importRoutes);
+app.use('/', authMiddleware, realAccountRoutes);
 
 if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
     app.listen(PORT, () => {

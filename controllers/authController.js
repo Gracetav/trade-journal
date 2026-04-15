@@ -11,6 +11,7 @@ exports.getLogin = (req, res) => {
 exports.postLogin = async (req, res) => {
     const { username, password } = req.body;
     try {
+        // Menggunakan library pg (Postgres) via wrapper db.js
         const [rows] = await db.query('SELECT * FROM users WHERE username = ?', [username]);
 
         if (rows.length === 0) {
@@ -26,10 +27,11 @@ exports.postLogin = async (req, res) => {
 
         req.session.userId = user.id;
         req.session.username = user.username;
+        req.session.role = user.role;
         res.redirect('/');
     } catch (error) {
         console.error('Login error:', error);
-        res.render('login', { layout: false, error: 'Terjadi kesalahan sistem' });
+        res.render('login', { layout: false, error: 'Terjadi kesalahan sistem: ' + error.message });
     }
 };
 
